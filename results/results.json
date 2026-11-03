@@ -1,0 +1,803 @@
+{
+ "n_trials": 55,
+ "persons": [
+  "Kendrick",
+  "marie"
+ ],
+ "network": {
+  "n": 55,
+  "mae": 0.6653624271921289,
+  "bias": -0.12752480458812024,
+  "rmse": 1.018646665154698,
+  "sd": 1.0199474831751298,
+  "worst": 2.7829473782072682,
+  "within1": 0.7454545454545455,
+  "within2": 0.8909090909090909,
+  "mape": 8.013762680587828,
+  "n_zero": 14,
+  "false_steps_mean": 0.0006483034477307963,
+  "false_steps_max": 0.0012313361475406737
+ },
+ "network_mae_ci95": [
+  0.4651335408057402,
+  0.8853687572437012
+ ],
+ "network_mape_ci95": [
+  5.776419271299089,
+  10.492215430240487
+ ],
+ "baseline": {
+  "n": 55,
+  "mae": 0.7636363636363637,
+  "bias": 0.0,
+  "rmse": 1.4396969378057567,
+  "sd": 1.4529663145135578,
+  "worst": 8.0,
+  "within1": 0.9090909090909091,
+  "within2": 0.9454545454545454,
+  "mape": 7.214167945875263,
+  "n_zero": 14,
+  "false_steps_mean": 0.7142857142857143,
+  "false_steps_max": 8.0
+ },
+ "baseline_mae_ci95": [
+  0.4727272727272727,
+  1.1272727272727272
+ ],
+ "baseline_mape_ci95": [
+  5.431033087283088,
+  9.041539941539941
+ ],
+ "baseline_description": "gyro peaks above 100 degrees/s at least 0.6 s apart",
+ "by_kind": {
+  "foot_tap": {
+   "n": 8,
+   "mae": 0.0006546330230725085,
+   "bias": 0.0006546330230725085,
+   "rmse": 0.0007437616858489397,
+   "sd": 0.0003774153459516156,
+   "worst": 0.0012313361475406737,
+   "within1": 1.0,
+   "within2": 1.0,
+   "mape": NaN,
+   "n_zero": 8,
+   "false_steps_mean": 0.0006546330230725085,
+   "false_steps_max": 0.0012313361475406737
+  },
+  "jog": {
+   "n": 10,
+   "mae": 1.0235352050916076,
+   "bias": -0.5720588171699864,
+   "rmse": 1.388839123880957,
+   "sd": 1.3340093376820035,
+   "worst": 2.4558199650873593,
+   "within1": 0.7,
+   "within2": 0.7,
+   "mape": 10.503422859143411,
+   "n_zero": 0,
+   "false_steps_mean": NaN,
+   "false_steps_max": NaN
+  },
+  "other": {
+   "n": 7,
+   "mae": 0.8185696695132708,
+   "bias": -0.7254071716506267,
+   "rmse": 1.1619158020946638,
+   "sd": 0.9803765743602363,
+   "worst": 2.7829473782072682,
+   "within1": 0.8571428571428571,
+   "within2": 0.8571428571428571,
+   "mape": 4.092848347566354,
+   "n_zero": 0,
+   "false_steps_mean": NaN,
+   "false_steps_max": NaN
+  },
+  "stand": {
+   "n": 6,
+   "mae": 0.0006398640139418466,
+   "bias": 0.0006398640139418466,
+   "rmse": 0.0007511112978917848,
+   "sd": 0.0004309184036212561,
+   "worst": 0.0010772072934415178,
+   "within1": 1.0,
+   "within2": 1.0,
+   "mape": NaN,
+   "n_zero": 6,
+   "false_steps_mean": 0.0006398640139418466,
+   "false_steps_max": 0.0010772072934415178
+  },
+  "walk_fast": {
+   "n": 8,
+   "mae": 0.5973612901777057,
+   "bias": 0.10426229321056635,
+   "rmse": 0.7399259885080812,
+   "sd": 0.7831218425062857,
+   "worst": 1.429205234713388,
+   "within1": 0.75,
+   "within2": 1.0,
+   "mape": 6.005250506585443,
+   "n_zero": 0,
+   "false_steps_mean": NaN,
+   "false_steps_max": NaN
+  },
+  "walk_normal": {
+   "n": 8,
+   "mae": 1.0176465066276665,
+   "bias": 0.46122155892068184,
+   "rmse": 1.2657189681083754,
+   "sd": 1.2600767232042915,
+   "worst": 2.2631897564109984,
+   "within1": 0.5,
+   "within2": 0.75,
+   "mape": 9.948355676829525,
+   "n_zero": 0,
+   "false_steps_mean": NaN,
+   "false_steps_max": NaN
+  },
+  "walk_slow": {
+   "n": 8,
+   "mae": 0.9625568919183636,
+   "bias": -0.09354661805132225,
+   "rmse": 1.1797716684445485,
+   "sd": 1.2572578869067594,
+   "worst": 1.8722598271303,
+   "within1": 0.5,
+   "within2": 1.0,
+   "mape": 8.406406676547824,
+   "n_zero": 0,
+   "false_steps_mean": NaN,
+   "false_steps_max": NaN
+  }
+ },
+ "walking_only": {
+  "n": 41,
+  "network": {
+   "n": 41,
+   "mae": 0.8923379816414356,
+   "bias": -0.17129123172231328,
+   "rmse": 1.1798123946900247,
+   "sd": 1.1818130205807706,
+   "worst": 2.7829473782072682,
+   "within1": 0.6585365853658537,
+   "within2": 0.8536585365853658,
+   "mape": 8.013762680587828,
+   "n_zero": 0,
+   "false_steps_mean": NaN,
+   "false_steps_max": NaN
+  },
+  "baseline": {
+   "n": 41,
+   "mae": 0.7804878048780488,
+   "bias": -0.24390243902439024,
+   "rmse": 1.0592219878345592,
+   "sd": 1.0435633139603473,
+   "worst": 3.0,
+   "within1": 0.926829268292683,
+   "within2": 0.9512195121951219,
+   "mape": 7.214167945875263,
+   "n_zero": 0,
+   "false_steps_mean": NaN,
+   "false_steps_max": NaN
+  }
+ },
+ "new_person": [
+  {
+   "person": "Kendrick",
+   "n": 28,
+   "network": {
+    "n": 28,
+    "mae": 1.191870392519562,
+    "bias": 0.5078278744344373,
+    "rmse": 1.6127866753797226,
+    "sd": 1.5588382175153517,
+    "worst": 4.617236812932056,
+    "within1": 0.5,
+    "within2": 0.8214285714285714,
+    "mape": 14.170847188579094,
+    "n_zero": 7,
+    "false_steps_mean": 0.00012497837359815023,
+    "false_steps_max": 0.00017352003155401974
+   },
+   "baseline": {
+    "n": 28,
+    "mae": 0.7142857142857143,
+    "bias": -0.42857142857142855,
+    "rmse": 0.9636241116594315,
+    "sd": 0.87891226666077,
+    "worst": 2.0,
+    "within1": 0.8928571428571429,
+    "within2": 1.0,
+    "mape": 8.672438672438673,
+    "n_zero": 7,
+    "false_steps_mean": 0.0,
+    "false_steps_max": 0.0
+   }
+  },
+  {
+   "person": "marie",
+   "n": 27,
+   "network": {
+    "n": 27,
+    "mae": 1.1590999172820238,
+    "bias": -0.3285484670057837,
+    "rmse": 1.6282423304176539,
+    "sd": 1.6251293767146626,
+    "worst": 3.3161491942507375,
+    "within1": 0.5185185185185185,
+    "within2": 0.6666666666666666,
+    "mape": 12.10440099934619,
+    "n_zero": 7,
+    "false_steps_mean": 0.015077590103406686,
+    "false_steps_max": 0.05375198295274686
+   },
+   "baseline": {
+    "n": 27,
+    "mae": 3.037037037037037,
+    "bias": 2.888888888888889,
+    "rmse": 8.018497134519428,
+    "sd": 7.6225037948540315,
+    "worst": 30.0,
+    "within1": 0.7777777777777778,
+    "within2": 0.8518518518518519,
+    "mape": 6.727855477855478,
+    "n_zero": 7,
+    "false_steps_mean": 9.714285714285714,
+    "false_steps_max": 30.0
+   }
+  }
+ ],
+ "distance": {
+  "n": 34,
+  "step_length_only_mape": 8.82950492880097,
+  "end_to_end_mape": 11.4540134344999,
+  "end_to_end_bias_pct": 0.5394743326059727,
+  "end_to_end_sd_pct": 15.677371958238346,
+  "end_to_end_worst_pct": 51.01861484040622,
+  "true_m": [
+   5.8,
+   5.8,
+   5.8,
+   5.8,
+   5.8,
+   5.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   5.8,
+   5.8,
+   5.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   4.8,
+   5.8,
+   5.8,
+   5.8,
+   5.8,
+   5.8,
+   5.8,
+   4.8,
+   4.8,
+   5.8,
+   5.8
+  ],
+  "pred_m": [
+   5.278146442638213,
+   5.372811426860848,
+   5.699784236813199,
+   5.539469789060845,
+   5.174209180740144,
+   6.262353996725646,
+   5.41156068158248,
+   4.696818954539197,
+   4.916703509855172,
+   5.737717002452451,
+   4.874745182614553,
+   5.05206236958059,
+   4.509664019485778,
+   5.401777669461915,
+   5.039091224031329,
+   5.901628938983079,
+   5.301747785324647,
+   5.432833832565902,
+   7.248893512339498,
+   5.6340383343488485,
+   4.616423228447132,
+   5.881116002927081,
+   4.6275264988421245,
+   5.188392730297419,
+   6.4808599503044215,
+   6.070740929401676,
+   6.395235511083431,
+   6.348224263316099,
+   4.928982588350361,
+   5.252275938825523,
+   4.328124730348309,
+   3.368369446962345,
+   3.848746860428639,
+   4.41505305225253
+  ],
+  "per_person": {
+   "Kendrick": {
+    "n": 18,
+    "step_length_only_mape": 3.1213095652000216,
+    "end_to_end_mape": 7.1673552125489834,
+    "end_to_end_bias_pct": 3.6296022809302317,
+    "end_to_end_sd_pct": 9.035160940340942,
+    "end_to_end_worst_pct": 24.8970139767777,
+    "model": "step length = 0.483 + 0.024 x cadence"
+   },
+   "marie": {
+    "n": 16,
+    "step_length_only_mape": 13.017203779042454,
+    "end_to_end_mape": 15.349120911193435,
+    "end_to_end_bias_pct": -4.333926333476528,
+    "end_to_end_sd_pct": 19.789976087390205,
+    "end_to_end_worst_pct": 41.18435307042447,
+    "model": "step length = 0.275 + 0.103 x cadence"
+   }
+  }
+ },
+ "oof": [
+  {
+   "name": "Kendrick__walk_slow__12steps__5.8m__20261103-031024.csv",
+   "person": "Kendrick",
+   "kind": "walk_slow",
+   "true": 12,
+   "network": 10.6870113022072,
+   "baseline": 12.0
+  },
+  {
+   "name": "Kendrick__walk_slow__11steps__5.8m__20261103-031208.csv",
+   "person": "Kendrick",
+   "kind": "walk_slow",
+   "true": 11,
+   "network": 10.816318117834221,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__walk_normal__11steps__5.8m__20261103-031314.csv",
+   "person": "Kendrick",
+   "kind": "walk_normal",
+   "true": 11,
+   "network": 11.299755197927361,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__walk_normal__11steps__5.8m__20261103-031401.csv",
+   "person": "Kendrick",
+   "kind": "walk_normal",
+   "true": 11,
+   "network": 10.873331577127761,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__walk_fast__11steps__5.8m__20261103-031521.csv",
+   "person": "Kendrick",
+   "kind": "walk_fast",
+   "true": 11,
+   "network": 9.570794765286612,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__walk_fast__11steps__5.8m__20261103-031608.csv",
+   "person": "Kendrick",
+   "kind": "walk_fast",
+   "true": 11,
+   "network": 11.811309240609422,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__walk_slow__9steps__4.8m__20261103-031752.csv",
+   "person": "Kendrick",
+   "kind": "walk_slow",
+   "true": 9,
+   "network": 10.8722598271303,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__walk_slow__9steps__4.8m__20261103-031831.csv",
+   "person": "Kendrick",
+   "kind": "walk_slow",
+   "true": 9,
+   "network": 9.151379772466186,
+   "baseline": 8.0
+  },
+  {
+   "name": "Kendrick__walk_normal__9steps__4.8m__20261103-032108.csv",
+   "person": "Kendrick",
+   "kind": "walk_normal",
+   "true": 9,
+   "network": 9.497024485237924,
+   "baseline": 8.0
+  },
+  {
+   "name": "Kendrick__walk_normal__9steps__4.8m__20261103-032152.csv",
+   "person": "Kendrick",
+   "kind": "walk_normal",
+   "true": 9,
+   "network": 11.263189756410998,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__walk_fast__9steps__4.8m__20261103-032353.csv",
+   "person": "Kendrick",
+   "kind": "walk_fast",
+   "true": 9,
+   "network": 9.222744980558264,
+   "baseline": 8.0
+  },
+  {
+   "name": "Kendrick__walk_fast__9steps__4.8m__20261103-032434.csv",
+   "person": "Kendrick",
+   "kind": "walk_fast",
+   "true": 9,
+   "network": 9.537214141785347,
+   "baseline": 8.0
+  },
+  {
+   "name": "Kendrick__foot_tap__0steps__20261103-034042.csv",
+   "person": "Kendrick",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 0.0006940634872290019,
+   "baseline": 0.0
+  },
+  {
+   "name": "Kendrick__foot_tap__0steps__20261103-034316.csv",
+   "person": "Kendrick",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 0.0003728943020693265,
+   "baseline": 0.0
+  },
+  {
+   "name": "Kendrick__foot_tap__0steps__20261103-034352.csv",
+   "person": "Kendrick",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 0.0006978177205865244,
+   "baseline": 0.0
+  },
+  {
+   "name": "Kendrick__stand__0steps__20261103-035017.csv",
+   "person": "Kendrick",
+   "kind": "stand",
+   "true": 0,
+   "network": 1.2425677576974856e-05,
+   "baseline": 0.0
+  },
+  {
+   "name": "Kendrick__stand__0steps__20261103-035044.csv",
+   "person": "Kendrick",
+   "kind": "stand",
+   "true": 0,
+   "network": 0.0004886325148270587,
+   "baseline": 0.0
+  },
+  {
+   "name": "Kendrick__stand__0steps__20261103-035112.csv",
+   "person": "Kendrick",
+   "kind": "stand",
+   "true": 0,
+   "network": 0.00032189357523471074,
+   "baseline": 0.0
+  },
+  {
+   "name": "Kendrick__foot_tap__0steps__20261103-035213.csv",
+   "person": "Kendrick",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 0.0008615884658809136,
+   "baseline": 0.0
+  },
+  {
+   "name": "Kendrick__jog__9steps__4.8m__20261103-035411.csv",
+   "person": "Kendrick",
+   "kind": "jog",
+   "true": 9,
+   "network": 8.396900323822251,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__jog__9steps__4.8m__20261103-035451.csv",
+   "person": "Kendrick",
+   "kind": "jog",
+   "true": 9,
+   "network": 9.608945691067785,
+   "baseline": 8.0
+  },
+  {
+   "name": "Kendrick__jog__9steps__4.8m__20261103-035610.csv",
+   "person": "Kendrick",
+   "kind": "jog",
+   "true": 9,
+   "network": 9.53937388314256,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__jog__10steps__5.8m__20261103-035914.csv",
+   "person": "Kendrick",
+   "kind": "jog",
+   "true": 10,
+   "network": 10.857591978178448,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__jog__10steps__5.8m__20261103-040008.csv",
+   "person": "Kendrick",
+   "kind": "jog",
+   "true": 10,
+   "network": 9.865665464064676,
+   "baseline": 10.0
+  },
+  {
+   "name": "Kendrick__jog__10steps__5.8m__20261103-040109.csv",
+   "person": "Kendrick",
+   "kind": "jog",
+   "true": 10,
+   "network": 10.122260282097411,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__walk_slow__13steps__4.8m__20261103-042812.csv",
+   "person": "marie",
+   "kind": "walk_slow",
+   "true": 13,
+   "network": 14.45240149587168,
+   "baseline": 12.0
+  },
+  {
+   "name": "marie__walk_slow__13steps__4.8m__20261103-042901.csv",
+   "person": "marie",
+   "kind": "walk_slow",
+   "true": 13,
+   "network": 11.279252724304985,
+   "baseline": 12.0
+  },
+  {
+   "name": "marie__walk_normal__11steps__4.8m__20261103-043106.csv",
+   "person": "marie",
+   "kind": "walk_normal",
+   "true": 11,
+   "network": 8.9009686320443,
+   "baseline": 12.0
+  },
+  {
+   "name": "marie__walk_normal__11steps__4.8m__20261103-043144.csv",
+   "person": "marie",
+   "kind": "walk_normal",
+   "true": 11,
+   "network": 11.579300315957292,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__walk_fast__9steps__4.8m__20261103-043225.csv",
+   "person": "marie",
+   "kind": "walk_fast",
+   "true": 9,
+   "network": 8.777902740075142,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__walk_fast__9steps__4.8m__20261103-043257.csv",
+   "person": "marie",
+   "kind": "walk_fast",
+   "true": 9,
+   "network": 10.078882579434215,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__walk_slow__13steps__5.8m__20261103-043402.csv",
+   "person": "marie",
+   "kind": "walk_slow",
+   "true": 13,
+   "network": 12.864928642534807,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__walk_slow__13steps__5.8m__20261103-043436.csv",
+   "person": "marie",
+   "kind": "walk_slow",
+   "true": 13,
+   "network": 12.128075173240044,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__walk_normal__11steps__5.8m__20261103-043508.csv",
+   "person": "marie",
+   "kind": "walk_normal",
+   "true": 11,
+   "network": 12.206388528700668,
+   "baseline": 12.0
+  },
+  {
+   "name": "marie__walk_normal__11steps__5.8m__20261103-043540.csv",
+   "person": "marie",
+   "kind": "walk_normal",
+   "true": 11,
+   "network": 12.06981397795915,
+   "baseline": 12.0
+  },
+  {
+   "name": "marie__walk_fast__10steps__5.8m__20261103-043622.csv",
+   "person": "marie",
+   "kind": "walk_fast",
+   "true": 10,
+   "network": 9.678906506769689,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__walk_fast__10steps__5.8m__20261103-043652.csv",
+   "person": "marie",
+   "kind": "walk_fast",
+   "true": 10,
+   "network": 10.15634339116584,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__stand__0steps__20261103-043753.csv",
+   "person": "marie",
+   "kind": "stand",
+   "true": 0,
+   "network": 0.0010026252959445259,
+   "baseline": 0.0
+  },
+  {
+   "name": "marie__stand__0steps__20261103-043821.csv",
+   "person": "marie",
+   "kind": "stand",
+   "true": 0,
+   "network": 0.0009363997266262913,
+   "baseline": 0.0
+  },
+  {
+   "name": "marie__stand__0steps__20261103-043847.csv",
+   "person": "marie",
+   "kind": "stand",
+   "true": 0,
+   "network": 0.0010772072934415178,
+   "baseline": 0.0
+  },
+  {
+   "name": "marie__foot_tap__0steps__20261103-043949.csv",
+   "person": "marie",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 0.00035787355742122884,
+   "baseline": 0.0
+  },
+  {
+   "name": "marie__foot_tap__0steps__20261103-044018.csv",
+   "person": "marie",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 5.830221346773447e-05,
+   "baseline": 0.0
+  },
+  {
+   "name": "marie__foot_tap__0steps__20261103-044228.csv",
+   "person": "marie",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 0.0009631882903846645,
+   "baseline": 2.0
+  },
+  {
+   "name": "marie__foot_tap__0steps__20261103-044255.csv",
+   "person": "marie",
+   "kind": "foot_tap",
+   "true": 0,
+   "network": 0.0012313361475406737,
+   "baseline": 8.0
+  },
+  {
+   "name": "marie__jog__8steps__4.8m__20261103-044434.csv",
+   "person": "marie",
+   "kind": "jog",
+   "true": 8,
+   "network": 8.129210105121903,
+   "baseline": 8.0
+  },
+  {
+   "name": "marie__jog__9steps__4.8m__20261103-044515.csv",
+   "person": "marie",
+   "kind": "jog",
+   "true": 9,
+   "network": 6.620197468703964,
+   "baseline": 8.0
+  },
+  {
+   "name": "marie__jog__10steps__5.8m__20261103-044546.csv",
+   "person": "marie",
+   "kind": "jog",
+   "true": 10,
+   "network": 7.595086597188498,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__jog__11steps__5.8m__20261103-044615.csv",
+   "person": "marie",
+   "kind": "jog",
+   "true": 11,
+   "network": 8.54418003491264,
+   "baseline": 10.0
+  },
+  {
+   "name": "marie__other__20steps__20261103-044737.csv",
+   "person": "marie",
+   "kind": "other",
+   "true": 20,
+   "network": 20.326068742519254,
+   "baseline": 20.0
+  },
+  {
+   "name": "marie__other__20steps__20261103-044804.csv",
+   "person": "marie",
+   "kind": "other",
+   "true": 20,
+   "network": 19.76801853107796,
+   "baseline": 20.0
+  },
+  {
+   "name": "marie__other__20steps__20261103-044828.csv",
+   "person": "marie",
+   "kind": "other",
+   "true": 20,
+   "network": 19.60151129710914,
+   "baseline": 20.0
+  },
+  {
+   "name": "marie__other__20steps__20261103-044851.csv",
+   "person": "marie",
+   "kind": "other",
+   "true": 20,
+   "network": 19.133777950976874,
+   "baseline": 20.0
+  },
+  {
+   "name": "Kendrick__other__20steps__20261103-051543.csv",
+   "person": "Kendrick",
+   "kind": "other",
+   "true": 20,
+   "network": 19.484066788518884,
+   "baseline": 20.0
+  },
+  {
+   "name": "Kendrick__other__20steps__20261103-051620.csv",
+   "person": "Kendrick",
+   "kind": "other",
+   "true": 20,
+   "network": 17.21705262179273,
+   "baseline": 22.0
+  },
+  {
+   "name": "Kendrick__other__20steps__20261103-051651.csv",
+   "person": "Kendrick",
+   "kind": "other",
+   "true": 20,
+   "network": 19.391653866450767,
+   "baseline": 20.0
+  }
+ ],
+ "numpy_vs_torch_max_diff": 8.958920378887569e-07,
+ "synthetic": false,
+ "seconds": 401,
+ "cv_restarts": [
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "final_restarts": 0,
+ "epochs": 60
+}
