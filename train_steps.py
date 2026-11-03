@@ -21,6 +21,7 @@ from pathlib import Path
 import numpy as np
 
 import steps_eval as ev
+import steps_export as export
 import steps_plots as plots
 from steps_baseline import Baseline
 from steps_data import FS, load_legacy_negatives, load_trials
@@ -172,7 +173,6 @@ def main(argv=None):
     if len(di) >= 3:
         d_act_final = np.array([active_seconds(sm.density_of(net, trials[i].x)) for i in di])
         dm = DistanceModel().fit(d_steps, d_act_final, d_true)
-        (models / "distance.json").write_text(json.dumps({"a": dm.a, "b": dm.b, "description": dm.kind, "n_trials": len(di)}), encoding="utf-8")
         print("  distance model: " + dm.kind)
     # the NumPy copy must give the same answer as PyTorch, or the board would count differently from the laptop
     worst = max(abs(np_net.count(__import__("steps_data").features(t.x)) - sm.count_of(net, t.x)) for t in trials[:5])
@@ -199,6 +199,7 @@ def main(argv=None):
                "numpy_vs_torch_max_diff": float(worst), "synthetic": bool(a.synthetic), "seconds": round(time.time() - t_start),
                "cv_restarts": restarts, "final_restarts": int(net.restarts), "epochs": a.epochs}
     (out / "results.json").write_text(json.dumps(results, indent=1, default=float), encoding="utf-8")
+    export.write_assets(models, np_net, trials, results)                     # models/distance.json (everyone and each person) and models/evaluation.json, for the live app
     write_summary(out / "summary.md", results, trials, np_net, dm, a)
     print("\nDone in %d s. Models in %s, figures and summary.md in %s." % (time.time() - t_start, models, out))
     return results

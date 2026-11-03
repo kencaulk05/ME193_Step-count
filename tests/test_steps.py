@@ -224,6 +224,43 @@ expect("and the active time is about 9 s (from 5% to 95% of the steps)", 8.5 <= 
 short = LiveCounter(const); short.push(xx[:50])
 expect("a pace needs at least a second of final density: before that it says 0", short.steps_per_minute() == 0.0)
 
+print("7c. the step-length models and the evaluation card the live app needs")
+import steps_export as ex
+rn = random_net(3)
+walks = []
+for i, (person, steps, dist) in enumerate([("ann", 20, 10.0), ("ann", 26, 13.4), ("ann", 15, 7.4), ("ann", 31, 16.5), ("ann", 22, 11.2), ("ann", 28, 14.9), ("bob", 20, 9.0), ("bob", 18, 8.2)]):
+    t = make_trial(np.random.default_rng(i), "walk_normal", steps=steps, person=person); t.distance_m = dist; walks.append(t)
+dmods = ex.distance_models(rn, walks)
+expect("a pooled model, plus one for each person with at least 6 walks (ann yes, bob has only 2)", dmods["n_trials"] == 8 and set(dmods["people"]) == {"ann"} and dmods["people"]["ann"]["n_trials"] == 6, str(dmods["people"].keys()))
+expect("each model is a line: a, b and a description that says so", all(k in dmods for k in ("a", "b", "description")) and "cadence" in dmods["people"]["ann"]["description"] or "constant" in dmods["people"]["ann"]["description"])
+expect("with fewer than 3 measured walks there is no model at all", ex.distance_models(rn, walks[:2]) is None)
+oof = [{"true": 10, "network": 10.4}, {"true": 12, "network": 11.6}, {"true": 0, "network": 0.0}, {"true": 20, "network": 22.6}]
+res = {"n_trials": 4, "persons": ["ann"], "network": {"mae": 0.85, "within1": 0.75, "worst": 2.6, "false_steps_mean": 0.0}, "network_mae_ci95": [0.1, 1.5], "baseline": {"mae": 1.2, "false_steps_mean": 0.5}, "oof": oof,
+       "walking_only": {"network": {"mae": 1.1}, "baseline": {"mae": 0.9}}, "distance": {"end_to_end_mape": 11.0, "per_person": {"ann": {"end_to_end_mape": 7.0}}}}
+card = ex.evaluation_summary(res)
+expect("the card copies the headline numbers and adds the error once the count is rounded to a whole step (10.4 -> 10, 11.6 -> 12, 0 -> 0, 22.6 -> 23: errors 0, 0, 0, 3)", abs(card["network_mae_rounded"] - 0.75) < 1e-9 and card["within1_rounded"] == 0.75 and card["network_mae"] == 0.85 and card["distance_per_person_mape"] == {"ann": 7.0}, str(card))
+out_dir = tmp / "assets_out"; out_dir.mkdir()
+ex.write_assets(out_dir, rn, walks, res)
+expect("write_assets writes distance.json and evaluation.json, and both read back as JSON", json.loads((out_dir / "distance.json").read_text())["n_trials"] == 8 and json.loads((out_dir / "evaluation.json").read_text())["n_trials"] == 4)
+
+print("7d. copying the network into the live app")
+import sync_live_app as sy
+app_dir, mdl = tmp / "app", tmp / "mdl"; mdl.mkdir()
+rn.save(mdl / "step_net.json"); (mdl / "distance.json").write_text("{}"); (mdl / "evaluation.json").write_text("{}")
+expect("the app needs only NumPy modules and the model files: no PyTorch module is copied", all("torch" not in (ROOT / m).read_text() for m in sy.MODULES) and "steps_model.py" not in sy.MODULES)
+expect("--check on an empty app says it is out of date (exit 1), and copies nothing", sy.main(["--app", str(app_dir), "--models", str(mdl), "--check"]) == 1 and not (app_dir / "python").exists())
+expect("syncing copies the modules and the model", sy.main(["--app", str(app_dir), "--models", str(mdl)]) == 0 and all((app_dir / "python" / m).exists() for m in sy.MODULES) and (app_dir / "python" / "model" / "step_net.json").exists())
+expect("afterwards --check says up to date (exit 0)", sy.main(["--app", str(app_dir), "--models", str(mdl), "--check"]) == 0)
+(app_dir / "python" / "steps_live.py").write_text("# edited by hand")
+expect("a copy changed by hand is noticed (exit 1) and repaired by the next sync", sy.main(["--app", str(app_dir), "--models", str(mdl), "--check"]) == 1 and sy.main(["--app", str(app_dir), "--models", str(mdl)]) == 0 and (app_dir / "python" / "steps_live.py").read_bytes() == (ROOT / "steps_live.py").read_bytes())
+try:
+    sy.main(["--app", str(app_dir), "--models", str(tmp / "nothing")]); expect("syncing with no trained network is refused", False)
+except SystemExit as e:
+    expect("syncing with no trained network is refused, and says to run train_steps.py", "train_steps.py" in str(e))
+real_app = ROOT / "apps" / "gait-steps-live"
+if real_app.exists() and (ROOT / "models" / "step_net.json").exists():
+    expect("the live app in this project carries the CURRENT network and modules (run sync_live_app.py after retraining)", sy.main(["--app", str(real_app), "--models", str(ROOT / "models"), "--check"]) == 0)
+
 if not HAVE_TORCH:
     print("\nPyTorch tests skipped.")
     print("ALL PASSED (without PyTorch)" if problems == 0 else f"{problems} CHECK(S) FAILED")
@@ -284,7 +321,7 @@ print("11b. a run that gets stuck counting nothing is spotted and restarted")
 import types
 calls = []
 real_train = sm._train_once
-def fake_train(trials, epochs, seed, lr, batch, aug, width, log):
+def fake_train(trials, epochs, seed, lr, batch, aug, width, log, make_net=None):
     calls.append(seed)
     net = sm.StepNet()
     return net, ([1.1] * epochs if len(calls) == 1 else [0.05] * epochs)            # the first attempt ends stuck, the second is healthy
@@ -303,6 +340,41 @@ expect("if every attempt gets stuck it gives up after 3 tries and says so, inste
 dead = sm.StepNet(); torch.nn.init.constant_(dead.head.bias, -25.0)
 expect("a network that outputs nothing is recognised as collapsed; the trained network of section 11 is not; and with no walking trials there is nothing to count, so it is not", sm.is_collapsed(dead, train) and not sm.is_collapsed(net1, train) and not sm.is_collapsed(dead, [t for t in train if t.steps == 0]))
 expect("the 60-epoch training in section 11 was not restarted (its loss began at %.2f and fell to %.2f)" % (h1[0], h1[-1]), net1.restarts == 0 and net1.collapsed is False)
+
+print("11c. the architecture comparison")
+import argparse, contextlib, io as _io
+import arch_compare as ac, steps_alt as alt
+d_true = np.array([10.0, 10, 10, 10])
+m, lo, hi = ac.paired_ci(d_true, [10, 10, 12, 12], [11, 11, 11, 11])
+expect("paired difference: errors (0, 0, 2, 2) against (1, 1, 1, 1) average out to 0, and the interval brackets 0", abs(m) < 1e-9 and lo <= 0 <= hi, "%.2f (%.2f to %.2f)" % (m, lo, hi))
+m, lo, hi = ac.paired_ci(d_true, [10, 10, 10, 10], [12, 12, 12, 12])
+expect("a variant that is exactly right against one that is 2 out everywhere: mean difference -2, interval -2 to -2 (negative means better)", abs(m + 2) < 1e-9 and abs(lo + 2) < 1e-9 and abs(hi + 2) < 1e-9)
+expect("every variant is built, gives one density per reading that is never negative, and starts at about the same total density (so the comparison starts level)",
+       all(tuple(b().eval()(torch.randn(1, 8, 400)).shape) == (1, 400) and bool((b().eval()(torch.randn(1, 8, 400)) >= 0).all()) and 0.15 < float(b().eval()(torch.randn(1, 8, 400)).sum()) < 1.0 for _, b, _ in alt.VARIANTS.values()))
+expect("the shipped network is the reference, listed first, and the variants cover width, depth, kernel size and a recurrent network", list(alt.VARIANTS)[0] == "reference" and {"narrow", "wide", "shallow", "deep", "kernel3", "kernel9", "gru"} <= set(alt.VARIANTS))
+expect("the reach of kernel 5 with dilations 1 to 16 is 125 readings, as for the shipped network", alt.receptive_field(5, (1, 2, 4, 8, 16)) == 125)
+fake = {"reference": {"what": "ref", "params": 1, "restarts": [0], "metrics": {"mae": 0.7}, "mae_ci95": (0.5, 0.9), "mae_walking": 0.9, "vs_reference": None, "beats_reference_by_rule": False},
+        "better": {"what": "b", "params": 2, "restarts": [0], "metrics": {"mae": 0.4}, "mae_ci95": (0.3, 0.5), "mae_walking": 0.5, "vs_reference": {"mean": -0.3, "lo": -0.5, "hi": -0.1}, "beats_reference_by_rule": True}}
+ns = argparse.Namespace(synthetic=False, epochs=60)
+ac.write_summary(tmp / "cmp_win.md", fake, 55, 5, ns)
+fake["better"].update({"vs_reference": {"mean": -0.06, "lo": -0.3, "hi": 0.2}, "beats_reference_by_rule": False})
+ac.write_summary(tmp / "cmp_none.md", fake, 55, 5, ns)
+expect("when a variant is better by the rule the summary says so, by name", "By the rule, better beat the shipped network" in (tmp / "cmp_win.md").read_text() and "beats it by the rule" in (tmp / "cmp_win.md").read_text())
+expect("when none is, the summary says the shipped network stays and why (the interval includes zero)", "No variant beat the shipped network by the rule" in (tmp / "cmp_none.md").read_text() and "cannot be told apart from noise" in (tmp / "cmp_none.md").read_text())
+expect("the rule is written into the summary, with its margin of 0.15 steps", "at least 0.15 steps" in (tmp / "cmp_none.md").read_text() and "fixed before any result was seen" in (tmp / "cmp_none.md").read_text())
+cmp_out = tmp / "cmp_run"
+args = argparse.Namespace(trials=None, synthetic=True, legacy=None, out=str(cmp_out), epochs=2, folds=2, seed=0, variants=["narrow"], resume=False)
+with contextlib.redirect_stdout(_io.StringIO()): first = ac.run(args)
+args2 = argparse.Namespace(**{**vars(args), "variants": ["narrow", "shallow"], "resume": True})
+buf = _io.StringIO()
+with contextlib.redirect_stdout(buf): second = ac.run(args2)
+expect("an interrupted run can be resumed: the second run says what it skipped, and only trains the new variant", "resuming: already done: reference, narrow" in buf.getvalue() and buf.getvalue().count("weights") == 1 and "shallow" in buf.getvalue(), buf.getvalue()[:160].replace("\n", " | "))
+expect("the skipped variants keep exactly their earlier predictions (they were not retrained)", second["narrow"]["pred"] == first["narrow"]["pred"] and second["reference"]["pred"] == first["reference"]["pred"])
+expect("and the final files cover all three variants, with the paired differences against the reference", set(second) == {"reference", "narrow", "shallow"} and second["narrow"]["vs_reference"] is not None and (cmp_out / "architecture_comparison.md").exists())
+args3 = argparse.Namespace(**{**vars(args), "epochs": 3, "variants": ["narrow"], "resume": True})
+buf = _io.StringIO()
+with contextlib.redirect_stdout(buf): ac.run(args3)
+expect("a saved run with different settings (epochs) is NOT reused", "resuming" not in buf.getvalue())
 
 print("12. the whole command, end to end")
 out = tmp / "run"

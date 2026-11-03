@@ -37,6 +37,12 @@ python run_all_tests.py
 | `results/*.png` | predicted against counted steps, the errors, network against baseline, example trials, training loss, distance |
 | `results/results.json` | every trial's out-of-fold prediction |
 
+## The live counter
+
+`apps/gait-steps-live/` is an Arduino App Lab app that counts steps while you walk: the count goes on a web page and on the board's LED matrix as a number. It runs the NumPy copy of the network (no PyTorch on the board). After each walk you type the steps you really counted, and it keeps a running tally of how right it was. Every walk is saved in the step recorder's format, so `train_steps.py` can read the demos back in as training data. See `apps/gait-steps-live/README.md`.
+
+After retraining, copy the new network into the app with `python sync_live_app.py` (`python sync_live_app.py --check` says whether the app's copy is stale; the tests fail if it is).
+
 ## Files
 
 ```
@@ -49,6 +55,12 @@ steps_distance.py   step length from cadence, with leave-one-out error
 steps_eval.py       cross-validation, error statistics, bootstrap intervals
 steps_plots.py      the figures
 synth.py            made-up trials with a known right answer, for the tests only
+steps_export.py     step-length models (everyone, and each person) and the accuracy card the live app shows
+steps_alt.py        other architectures (narrow, wide, shallow, deep, other kernel sizes, a GRU), only for the comparison
+arch_compare.py     does the architecture matter? the same cross-validation for each, with a rule fixed beforehand
+export_live_assets.py  rewrite distance.json and evaluation.json from an existing network, without retraining
+sync_live_app.py    copy the NumPy network and its models into apps/gait-steps-live
+apps/gait-steps-live/  the live counter (an App Lab app)
 train_steps.py      the command above
 tests/              what the tests check is in tests/README.md
 ```

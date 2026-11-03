@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How many steps?</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>How many steps?</h1>
+    <span id="conn" class="chip bad">connecting…</span>
+    <span id="imu" class="chip">IMU: ?</span>
+  </header>
+
+  <main>
+    <section class="card counter">
+      <div id="count" class="count">0</div>
+      <div class="unit">steps</div>
+      <div id="sub" class="sub">Type your name, press START and walk.</div>
+      <div class="metrics">
+        <div><span id="pace" class="num">–</span><span class="lab">steps a minute</span></div>
+        <div><span id="dist" class="num">–</span><span class="lab" id="distlab">metres</span></div>
+        <div><span id="time" class="num">–</span><span class="lab">seconds</span></div>
+      </div>
+      <label>Who is wearing it
+        <input id="person" maxlength="20" autocomplete="off" autocapitalize="none" placeholder="e.g. kendrick" list="people">
+        <datalist id="people"></datalist>
+      </label>
+      <div class="row">
+        <button id="start" type="button" class="go">START</button>
+        <button id="stop" type="button" class="halt" disabled>STOP</button>
+      </div>
+      <p id="warn" class="warn" hidden></p>
+    </section>
+
+    <section id="notice" class="notice" role="status" aria-live="polite"></section>
+
+    <section class="card">
+      <div class="field">The last 15 seconds</div>
+      <canvas id="plot" height="130" aria-label="The step density the network draws, and the rotation of the ankle"></canvas>
+      <div class="legend"><span class="d">steps the network sees (per second)</span><span class="g">ankle rotation</span></div>
+    </section>
+
+    <section id="result" class="card" hidden>
+      <div class="field">Result</div>
+      <p id="resultText" class="resulttext"></p>
+      <p id="distText" class="small"></p>
+      <div id="truthForm">
+        <label>Steps you really counted
+          <input id="truth" type="number" inputmode="numeric" min="0" max="500" placeholder="count out loud while you walk">
+        </label>
+        <label>Distance you walked in metres (optional: calibrates your step length)
+          <input id="truthDist" type="number" inputmode="decimal" min="0.5" max="500" step="any" placeholder="e.g. 5.8">
+        </label>
+        <div class="row">
+          <button id="save" type="button" class="go">Save</button>
+          <button id="discard" type="button">Delete this walk</button>
+        </div>
+      </div>
+      <p id="truthDone" class="truthdone" hidden></p>
+      <button id="again" type="button" class="again" hidden>Next walk</button>
+    </section>
+
+    <section class="card">
+      <div class="field">How right has it been in your demos?</div>
+      <p id="tallyText" class="resulttext">No demos with a counted answer yet.</p>
+      <table id="sessions"><tbody></tbody></table>
+    </section>
+
+    <section class="card">
+      <div class="field">How good is it, from the test trials</div>
+      <p id="evalText" class="small"></p>
+    </section>
+  </main>
+
+  <script src="libs/socket.io.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

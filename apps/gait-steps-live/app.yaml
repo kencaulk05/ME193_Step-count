@@ -1,0 +1,6 @@
+name: How Many Steps
+description: Live step counter. Reads the ankle IMU at 100 readings a second, runs the trained step network while you walk, and shows the count, pace and distance on a web page (port 7000) and the count as a number on the LED matrix. After each walk you type how many steps you really counted, and the page keeps a running tally of how right it was.
+ports: []
+bricks:
+- arduino:web_ui: {}
+icon: 👣

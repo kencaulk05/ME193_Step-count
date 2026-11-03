@@ -100,12 +100,12 @@ def count_loss(pred, y):
     return torch.abs(torch.log1p(pred) - torch.log1p(y)).mean()
 
 
-def fit(trials, epochs=60, seed=0, lr=3e-3, batch=4, aug=True, width=WIDTH, log=None, max_restarts=2):
+def fit(trials, epochs=60, seed=0, lr=3e-3, batch=4, aug=True, width=WIDTH, log=None, max_restarts=2, make_net=None):
     """Train a new network on trials (each has .x and .steps). Returns (network, loss per epoch).
     If a run ends stuck (see is_collapsed: it counts almost none of the steps in its own training walks), it is thrown away and training
     restarts with another seed. The network keeps .restarts (how many times that happened) and .collapsed (True if every attempt got stuck)."""
     for attempt in range(max_restarts + 1):
-        net, history = _train_once(trials, epochs, seed + 1000 * attempt, lr, batch, aug, width, log)
+        net, history = _train_once(trials, epochs, seed + 1000 * attempt, lr, batch, aug, width, log, make_net)
         stuck = is_collapsed(net, trials)
         if not stuck:
             break
@@ -124,10 +124,10 @@ def is_collapsed(net, trials):
     return counted < COLLAPSE_RATIO * sum(t.steps for t in walks)
 
 
-def _train_once(trials, epochs, seed, lr, batch, aug, width, log):
+def _train_once(trials, epochs, seed, lr, batch, aug, width, log, make_net=None):
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
-    net = StepNet(width=width)
+    net = make_net() if make_net else StepNet(width=width)          # make_net: another architecture, for the comparison in arch_compare.py
     opt = torch.optim.Adam(net.parameters(), lr=lr, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, epochs)
     history = []
