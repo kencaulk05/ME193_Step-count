@@ -99,11 +99,6 @@ python run_all_tests.py
 
 ![Decisions](docs/images/decisions.png)
 
-## Names
-
-People are never named in anything this code writes. The recorder saves the name you typed, and the loaders replace it with a letter (A, B, C, ...) in the order the people first appear: in the person field, in every trial name, and so in the results, the figures, the model files and the step-length models. `python train_steps.py --aliases my_letters.json` lets you choose the letters yourself (a local file such as `{"yourname": "A"}`, never committed), and `--keep-names` switches this off for private use only (do not commit those results). The tests fail if a shipped result or model contains anything but letters.
-
-The recorded trials themselves (`all_trials.zip`, `assets/data/`) carry whatever name you typed, so they are git-ignored here. Keep it that way, and do not publish another person's recordings without asking them.
 
 ## The live counter
 
