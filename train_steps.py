@@ -24,7 +24,7 @@ import steps_eval as ev
 import steps_export as export
 import steps_plots as plots
 from steps_baseline import Baseline
-from steps_data import FS, load_legacy_negatives, load_trials
+from steps_data import FS, Anonymizer, load_legacy_negatives, load_trials
 from steps_distance import DistanceModel, active_seconds, leave_one_out
 
 
@@ -37,6 +37,8 @@ def main(argv=None):
     ap.add_argument("--trials", help="zip or folder from the step recorder")
     ap.add_argument("--synthetic", action="store_true", help="use made-up trials (to test that the machinery works; NOT real accuracy)")
     ap.add_argument("--legacy", default=None, help="folder with the older gait recordings (standing, air-biking): extra negatives")
+    ap.add_argument("--aliases", default=None, help="a LOCAL json file {\"name\": \"A\"} choosing each person's letter (never commit it); by default people are lettered in the order they first appear")
+    ap.add_argument("--keep-names", action="store_true", help="private use only: keep the real names in the results (do not commit those results)")
     ap.add_argument("--out", default="results")
     ap.add_argument("--models", default="models")
     ap.add_argument("--epochs", type=int, default=60)
@@ -53,6 +55,7 @@ def main(argv=None):
     out, models = Path(a.out), Path(a.models)
     out.mkdir(parents=True, exist_ok=True); models.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
+    anon = Anonymizer(json.loads(Path(a.aliases).read_text(encoding="utf-8")) if a.aliases else None, keep=a.keep_names)
 
     # ---- 1. the data ----
     if a.synthetic:
@@ -61,7 +64,7 @@ def main(argv=None):
         skipped = []
         print("USING SYNTHETIC TRIALS: this checks the machinery, it says nothing about real accuracy.")
     else:
-        trials, skipped = load_trials(a.trials)
+        trials, skipped = load_trials(a.trials, anonymizer=anon)
     for name, why in skipped:
         print("  skipped %s: %s" % (name, why))
     if len(trials) < 8:
@@ -74,10 +77,10 @@ def main(argv=None):
                 legacy_dir = guess
                 break
     if legacy_dir and not a.synthetic:
-        legacy = load_legacy_negatives(legacy_dir)
+        legacy = load_legacy_negatives(legacy_dir, anonymizer=anon)
     persons = sorted({t.person for t in trials})
     kinds = sorted({t.kind for t in trials})
-    print("%d trials, %d person(s): %s; %.1f minutes, %d steps counted in all" % (len(trials), len(persons), ", ".join(persons), sum(t.seconds for t in trials) / 60, sum(t.steps for t in trials)))
+    print("%d trials, %d person(s)%s; %.1f minutes, %d steps counted in all" % (len(trials), len(persons), "" if a.keep_names else " (called %s: names are never written out)" % ", ".join(persons), sum(t.seconds for t in trials) / 60, sum(t.steps for t in trials)))
     print("  kinds: " + ", ".join("%s %d" % (k, sum(t.kind == k for t in trials)) for k in kinds))
     print("  plus %d older negative chunks (standing, air-biking) used for training only" % len(legacy))
     true = np.array([t.steps for t in trials], dtype=float)

@@ -5,6 +5,9 @@ you counted: how many steps you took (both feet), and how far you walked if you 
 
     load_trials("all_trials.zip")        the zip from the recorder's "Prepare zip of everything" button, or a folder holding manifest.csv
     load_legacy_negatives("data/")       the older gait recordings: standing still and air-biking have NO steps, so they are free negative examples
+
+PEOPLE ARE NEVER NAMED in anything this code writes. The recorder saves the name you typed, and the loaders replace it with a letter (A, B, C, ...)
+in the order the people first appear, in the person field, in the trial names, and so in every result, figure and model file. See Anonymizer.
 """
 import csv
 import io
@@ -20,6 +23,41 @@ GYRO_SCALE = 500.0                           # degrees per second
 N_FEATURES = 8                               # ax, ay, az, gx, gy, gz, |a|-1, |g|
 MAX_LOST_PCT = 2.0
 TRIM_S = 0.0                                 # trials already start and end quietly, so nothing is trimmed
+
+
+def _letters(i):
+    """0 -> A, 1 -> B, ... 25 -> Z, 26 -> AA, ..."""
+    return chr(65 + i) if i < 26 else _letters(i // 26 - 1) + chr(65 + i % 26)
+
+
+class Anonymizer:
+    """Replaces a person's name with a letter. The first person seen is A, the next B, and so on; the same name (any capitals, any spaces) always
+    gets the same letter. aliases={"name": "A"} chooses the letters yourself (keep that file local, never commit it); keep=True switches this off."""
+
+    def __init__(self, aliases=None, keep=False):
+        self.keep = keep
+        self.map = {str(k).strip().lower(): str(v).strip() for k, v in (aliases or {}).items()}
+
+    def label(self, name):
+        if self.keep:
+            return str(name)
+        key = str(name).strip().lower()
+        if key not in self.map:
+            used, i = set(self.map.values()), 0
+            while _letters(i) in used:
+                i += 1
+            self.map[key] = _letters(i)
+        return self.map[key]
+
+    def file_name(self, file_name, person):
+        """A recorder file name <person>__<kind>__... with the person's name swapped for the letter."""
+        if self.keep:
+            return file_name
+        lab = self.label(person)
+        for prefix in {str(person), str(person).replace(" ", "_")}:
+            if file_name.lower().startswith(prefix.lower() + "__"):
+                return lab + file_name[len(prefix):]
+        return lab + "__" + file_name
 
 
 @dataclass
@@ -60,38 +98,42 @@ def _files_of(source):
     return files.pop("manifest.csv"), files
 
 
-def load_trials(source, include_unlabelled=False):
-    """All good trials with a step count. Skips (and reports) trials that lost too many readings or still need their step count."""
+def load_trials(source, include_unlabelled=False, anonymizer=None):
+    """All good trials with a step count. Skips (and reports) trials that lost too many readings or still need their step count.
+    People are relabelled A, B, C ... (see Anonymizer); pass the same anonymizer to load_legacy_negatives so the letters agree."""
+    anon = anonymizer or Anonymizer()
     manifest, files = _files_of(source)
     trials, skipped = [], []
     for r in csv.DictReader(io.StringIO(manifest)):
-        name = r.get("file", "")
+        name, subject = r.get("file", ""), r.get("subject", "?")
+        person, shown = anon.label(subject), anon.file_name(name, subject)
         if name not in files:
-            skipped.append((name, "file missing from the zip")); continue
+            skipped.append((shown, "file missing from the zip")); continue
         if float(r.get("lost_pct") or 0) > MAX_LOST_PCT:
-            skipped.append((name, "more than %g%% of the readings were lost" % MAX_LOST_PCT)); continue
+            skipped.append((shown, "more than %g%% of the readings were lost" % MAX_LOST_PCT)); continue
         if (r.get("true_steps") or "") == "" and not include_unlabelled:
-            skipped.append((name, "no step count yet: press Edit on it in the recorder")); continue
+            skipped.append((shown, "no step count yet: press Edit on it in the recorder")); continue
         steps = int(float(r["true_steps"])) if (r.get("true_steps") or "") != "" else -1
         dist = float(r["distance_m"]) if (r.get("distance_m") or "") != "" else float("nan")
-        trials.append(Trial(name=name, person=r.get("subject", "?"), kind=r.get("kind", "?"), steps=steps, distance_m=dist, x=_read_csv_text(files[name], name)))
+        trials.append(Trial(name=shown, person=person, kind=r.get("kind", "?"), steps=steps, distance_m=dist, x=_read_csv_text(files[name], shown)))
     return trials, skipped
 
 
-def load_legacy_negatives(folder, chunk_s=30.0):
+def load_legacy_negatives(folder, chunk_s=30.0, anonymizer=None):
     """The earlier gait recordings: 'still' and 'bike' (air-biking on the back) have no steps, so they teach the network what NOT to count.
     Each is cut into chunks, and the first and last second (starting and stopping) are dropped."""
+    anon = anonymizer or Anonymizer()
     out = []
     for p in sorted(Path(folder).glob("*__*__*.csv")):
         person, label = p.name.split("__")[:2]
         if label not in ("still", "bike"):
             continue
-        a = _read_csv_text(p.read_text(encoding="utf-8"), p.name)[int(FS):-int(FS)]
+        a = _read_csv_text(p.read_text(encoding="utf-8"), anon.file_name(p.name, person))[int(FS):-int(FS)]
         n = int(chunk_s * FS)
         for i in range(0, len(a) - n // 2, n):
             seg = a[i:i + n]
             if len(seg) >= n // 2:
-                out.append(Trial(name="%s#%d" % (p.name, i // n), person=person, kind="stand" if label == "still" else "bike", steps=0, distance_m=float("nan"), x=seg, source="legacy"))
+                out.append(Trial(name="%s#%d" % (anon.file_name(p.name, person), i // n), person=anon.label(person), kind="stand" if label == "still" else "bike", steps=0, distance_m=float("nan"), x=seg, source="legacy"))
     return out
 
 

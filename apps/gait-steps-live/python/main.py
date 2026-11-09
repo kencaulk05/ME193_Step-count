@@ -16,6 +16,9 @@ Files go to  assets/data/  (the page serves that folder):
 
 THE DISTANCE is steps times a step length. The step length comes from the first of these that exists: the person's own calibration (the
 median of the walks where you typed a measured distance), the model fitted to that person's recorded trials, or the model for everyone.
+
+NAMES: the models are called A, B, ... (the order the people recorded), never by a name. To use A's model when you type your own name, put a file
+assets/data/person_aliases.json next to the sessions, like {"yourname": "A"}. That folder is git-ignored: keep it that way.
 """
 
 import collections
@@ -70,6 +73,7 @@ class Live:
         self.t_wall = None
         self.sessions = self._load_log()
         self.calibration = self._load_calibration()
+        self.aliases = self._load_aliases()
         self.last = None
 
     # ---- the stream ----
@@ -214,10 +218,11 @@ class Live:
             return None, "no step-length model"
         cad = float(steps) / max(float(active_s), 1e-6)
         models = self.distance.get("people", {})
-        key = next((k for k in models if k.lower() == person.lower()), None)
+        label = self.aliases.get(person.strip().lower(), person)             # a local file can say that "yourname" means model A
+        key = next((k for k in models if k.lower() == str(label).strip().lower()), None)
         m = models[key] if key else self.distance
         length = min(max(m["a"] + m["b"] * cad, STEP_MIN), STEP_MAX)
-        return length, ("the model fitted to %s's recorded walks" % key) if key else "the model for everyone (type a measured distance after a walk to calibrate)"
+        return length, ("the model fitted to person %s's recorded walks" % key) if key else "the model for everyone (type a measured distance after a walk to calibrate)"
 
     # ---- saving and loading ----
     def _save(self):
@@ -256,6 +261,15 @@ class Live:
                 return {k: [float(x) for x in v] for k, v in json.loads(path.read_text(encoding="utf-8")).items()}
             except (ValueError, TypeError):
                 return {}
+        return {}
+
+    def _load_aliases(self):
+        path = self.dir / "person_aliases.json"
+        if path.exists():
+            try:
+                return {str(k).strip().lower(): str(v).strip() for k, v in json.loads(path.read_text(encoding="utf-8")).items()}
+            except (ValueError, TypeError, AttributeError):
+                return {}                                                   # a broken file just means no aliases
         return {}
 
     def _write_calibration(self):

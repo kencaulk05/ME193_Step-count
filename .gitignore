@@ -1,0 +1,7 @@
+# the recorded trials and any local file that maps names to letters
+all_trials*.zip
+aliases.json
+**/person_aliases.json
+apps/*/assets/data/
+__pycache__/
+*.pyc

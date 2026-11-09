@@ -1,6 +1,6 @@
 """Tests for the step counter (steps_*.py, train_steps.py). No board needed.   python tests/test_steps.py
 The synthetic trials in these tests have a known right answer by construction: they check the MACHINERY, not real accuracy."""
-import csv, io, json, os, subprocess, sys, tempfile, zipfile
+import csv, io, json, os, re, subprocess, sys, tempfile, zipfile
 from pathlib import Path
 
 import numpy as np
@@ -62,16 +62,16 @@ sig = rng0.normal(0, 1, (500, 6)).astype(np.float32)
 recorder_zip(tmp / "t.zip", [row("a.csv", steps="20", dist="10"), row("b.csv", kind="foot_tap", steps="0"), row("c.csv", steps=""), row("d.csv", lost=5.0), row("gone.csv")],
              {"a.csv": sig, "b.csv": sig, "c.csv": sig, "d.csv": sig})
 trials, skipped = sd.load_trials(tmp / "t.zip")
-expect("two usable trials are loaded; the other three are skipped, each with its reason", [t.name for t in trials] == ["a.csv", "b.csv"] and len(skipped) == 3, str(skipped))
+expect("two usable trials are loaded; the other three are skipped, each with its reason", [t.name for t in trials] == ["A__a.csv", "A__b.csv"] and len(skipped) == 3, str(skipped))
 reasons = dict(skipped)
-expect("the reasons are in plain words: Edit for a missing count, lost readings, a missing file", "Edit" in reasons["c.csv"] and "lost" in reasons["d.csv"] and "missing" in reasons["gone.csv"], str(reasons))
+expect("the reasons are in plain words: Edit for a missing count, lost readings, a missing file", "Edit" in reasons["A__c.csv"] and "lost" in reasons["A__d.csv"] and "missing" in reasons["A__gone.csv"], str(reasons))
 t = trials[0]
-expect("a trial carries person, kind, steps, distance and a (T, 6) float32 signal", (t.person, t.kind, t.steps, t.distance_m) == ("ann", "walk_normal", 20, 10.0) and t.x.shape == (500, 6) and t.x.dtype == np.float32 and abs(t.seconds - 5.0) < 1e-9)
+expect("a trial carries person, kind, steps, distance and a (T, 6) float32 signal", (t.person, t.kind, t.steps, t.distance_m) == ("A", "walk_normal", 20, 10.0) and t.x.shape == (500, 6) and t.x.dtype == np.float32 and abs(t.seconds - 5.0) < 1e-9)
 expect("no distance means NaN, and a 0-step trial is kept", np.isnan(trials[1].distance_m) and trials[1].steps == 0)
 (tmp / "folder").mkdir()
 with zipfile.ZipFile(tmp / "t.zip") as z: z.extractall(tmp / "folder")
 t2, _ = sd.load_trials(tmp / "folder")
-expect("a plain folder works the same as the zip", [x.name for x in t2] == ["a.csv", "b.csv"] and np.allclose(t2[0].x, trials[0].x))
+expect("a plain folder works the same as the zip", [x.name for x in t2] == ["A__a.csv", "A__b.csv"] and np.allclose(t2[0].x, trials[0].x))
 with zipfile.ZipFile(tmp / "nom.zip", "w") as z: z.writestr("a.csv", "n,ax,ay,az,gx,gy,gz\n0,0,0,0,0,0,0\n")
 try:
     sd.load_trials(tmp / "nom.zip"); expect("a zip with no manifest is refused", False)
@@ -85,7 +85,35 @@ try:
 except ValueError as e:
     expect("a CSV with the wrong header is refused", "not a recorder file" in str(e))
 ul, _ = sd.load_trials(tmp / "t.zip", include_unlabelled=True)
-expect("trials still waiting for their count can be loaded on request (steps -1)", [x.steps for x in ul if x.name == "c.csv"] == [-1])
+expect("trials still waiting for their count can be loaded on request (steps -1)", [x.steps for x in ul if x.name == "A__c.csv"] == [-1])
+
+print("1b. nobody is named: people become letters")
+an = sd.Anonymizer()
+expect("people become letters in the order they first appear, and the same person (any capitals, any spaces) always gets the same letter", [an.label(n) for n in ("Zoe", "adam", " ZOE ", "Adam", "kim")] == ["A", "B", "A", "B", "C"])
+expect("after Z comes AA, AB, ...", sd._letters(25) == "Z" and sd._letters(26) == "AA" and sd._letters(27) == "AB" and sd._letters(51) == "AZ" and sd._letters(52) == "BA")
+a2 = sd.Anonymizer({"Zoe": "B"})
+expect("an alias file chooses letters, and the others get the next unused ones", [a2.label("zoe"), a2.label("adam"), a2.label("kim")] == ["B", "A", "C"])
+expect("keep=True switches it off (for private use)", sd.Anonymizer(keep=True).label("Zoe") == "Zoe" and sd.Anonymizer(keep=True).file_name("Zoe__walk.csv", "Zoe") == "Zoe__walk.csv")
+fn = lambda f, p: sd.Anonymizer().file_name(f, p)
+expect("in a recorder file name the name is swapped for the letter, whatever its capitals, and a name with a space (saved with an underscore) too", fn("Zoe__walk_normal__20steps__20261102-140007.csv", "zoe") == "A__walk_normal__20steps__20261102-140007.csv" and fn("sam_j__live__2026.csv", "Sam J") == "A__live__2026.csv")
+expect("a file name that does not start with the name still never keeps it: the letter goes in front of the whole name only when the name is not in it", fn("odd.csv", "zoe") == "A__odd.csv")
+with zipfile.ZipFile(tmp / "named.zip", "w") as z:
+    fields = ["file", "subject", "kind", "true_steps", "distance_m", "note", "start", "seconds", "samples", "dropped", "lost_pct"]
+    z.writestr("manifest.csv", ",".join(fields) + "\nZoe__walk_normal__20steps__20261102-140007.csv,Zoe,walk_normal,20,,,2026-11-02 14:00:07,5,500,0,0\nadam__walk_fast__20steps__20261102-140100.csv,adam,walk_fast,20,,,2026-11-02 14:01:00,5,500,0,0\nzoe__stand__0steps__20261102-140200.csv,zoe,stand,0,,,2026-11-02 14:02:00,5,500,0,0\nadam__stand__unknownsteps__20261102-140300.csv,adam,stand,,,,2026-11-02 14:03:00,5,500,0,0\n")
+    for nm in ("Zoe__walk_normal__20steps__20261102-140007.csv", "adam__walk_fast__20steps__20261102-140100.csv", "zoe__stand__0steps__20261102-140200.csv", "adam__stand__unknownsteps__20261102-140300.csv"):
+        z.writestr(nm, "n,ax,ay,az,gx,gy,gz\n" + "\n".join("%d,0,0,-1,0,0,0" % i for i in range(300)) + "\n")
+nt, ns = sd.load_trials(tmp / "named.zip")
+expect("loading a zip with real names: the people are A and B, in order of first appearance, and the same person is the same letter in every trial", [t.person for t in nt] == ["A", "B", "A"], str([t.person for t in nt]))
+expect("no trial name and no skipped-trial message keeps a name", all(re.fullmatch(r"[A-Z]{1,2}__.*", t.name) for t in nt) and all(re.fullmatch(r"[A-Z]{1,2}__.*", n) for n, _ in ns) and not any(("zoe" in t.name.lower() or "adam" in t.name.lower()) for t in nt) and not any(("zoe" in n.lower() or "adam" in n.lower()) for n, _ in ns), str([t.name for t in nt] + [n for n, _ in ns]))
+shared = sd.Anonymizer()
+nt2, _ = sd.load_trials(tmp / "named.zip", anonymizer=shared)
+(tmp / "legacy_named").mkdir(exist_ok=True)
+for who in ("Zoe", "Adam"):
+    (tmp / "legacy_named" / ("%s__still__20261027-031222.csv" % who)).write_text("n,ax,ay,az,gx,gy,gz\n" + "\n".join("%d,0,0,-1,0,0,0" % i for i in range(3200)) + "\n")
+lg = sd.load_legacy_negatives(tmp / "legacy_named", anonymizer=shared)
+expect("the older recordings, loaded with the same anonymizer, use the same letters for the same people (Zoe is A, Adam is B) and carry no name", {l.person for l in lg} == {"A", "B"} and all(not ("zoe" in l.name.lower() or "adam" in l.name.lower()) for l in lg), str([l.name for l in lg][:2]))
+nk, _ = sd.load_trials(tmp / "named.zip", anonymizer=sd.Anonymizer(keep=True))
+expect("with keep=True the names stay (private use)", [t.person for t in nk] == ["Zoe", "adam", "zoe"])
 
 print("2. the older recordings as free negative examples")
 if LEGACY:
@@ -133,7 +161,7 @@ if LEGACY:
     negs = sd.load_legacy_negatives(LEGACY)
     stills = [n for n in negs if n.kind == "stand"]
     bike = next(n for n in negs if n.kind == "bike")
-    walk = sd._read_csv_text(next(LEGACY.glob("Kendrick__walk__*.csv")).read_text(encoding="utf-8"), "walk")[200:-200]
+    walk = sd._read_csv_text(next(iter(sorted(LEGACY.glob("*__walk__*.csv")))).read_text(encoding="utf-8"), "walk")[200:-200]
     expect("on all %d REAL motionless chunks, absolute thresholds count no steps (a relative one counted over 100 per recording)" % len(stills), all(count_steps(n.x, "gyro", 50, 0.6) == 0 and count_steps(n.x, "acc", 0.12, 0.3) == 0 for n in stills))
     expect("but a classical counter DOES count REAL air-biking as steps (%d), which is what the network must learn not to do" % count_steps(bike.x, "gyro", 50, 0.6), count_steps(bike.x, "gyro", 50, 0.6) > 10)
     expect("on REAL walking it counts plenty", count_steps(walk, "gyro", 50, 0.6) > 20, "%d" % count_steps(walk, "gyro", 50, 0.6))
@@ -260,6 +288,40 @@ except SystemExit as e:
 real_app = ROOT / "apps" / "gait-steps-live"
 if real_app.exists() and (ROOT / "models" / "step_net.json").exists():
     expect("the live app in this project carries the CURRENT network and modules (run sync_live_app.py after retraining)", sy.main(["--app", str(real_app), "--models", str(ROOT / "models"), "--check"]) == 0)
+
+print("7e. nothing that ships carries a name")
+shipped_ok = True
+res_path, mdl_dir = ROOT / "results" / "results.json", ROOT / "models"
+if res_path.exists() and not json.loads(res_path.read_text(encoding="utf-8")).get("synthetic"):
+    RJ = json.loads(res_path.read_text(encoding="utf-8"))
+    expect("in the shipped results.json every person is a letter, and every trial name starts with that letter and two underscores", all(re.fullmatch(r"[A-Z]{1,2}", p) for p in RJ["persons"]) and all(re.fullmatch(r"[A-Z]{1,2}", r["person"]) and re.match(r"[A-Z]{1,2}__", r["name"]) for r in RJ["oof"]), str(RJ["persons"]))
+    expect("the people tested as a new person, and in the distance results, are letters too", all(re.fullmatch(r"[A-Z]{1,2}", p["person"]) for p in RJ["new_person"]) and all(re.fullmatch(r"[A-Z]{1,2}", k) for k in (RJ.get("distance") or {}).get("per_person", {})))
+    texts = {p.name: p.read_text(encoding="utf-8") for p in list((ROOT / "results").glob("*.md")) + [ROOT / "README.md"]}
+    bad = [(n, m) for n, tx in texts.items() for m in re.findall(r"(\w+)__(?:walk_slow|walk_normal|walk_fast|jog|foot_tap|stand|other|bike)", tx) if not re.fullmatch(r"[A-Z]{1,2}", m)]
+    expect("no file name in the shipped docs or summaries has a person's name in front of it", not bad, str(bad[:3]))
+if (mdl_dir / "distance.json").exists() and (mdl_dir / "evaluation.json").exists():
+    DJ, EJ = json.loads((mdl_dir / "distance.json").read_text(encoding="utf-8")), json.loads((mdl_dir / "evaluation.json").read_text(encoding="utf-8"))
+    SJ = json.loads((mdl_dir / "step_net.json").read_text(encoding="utf-8"))
+    syn = SJ.get("meta", {}).get("synthetic")
+    if not syn:
+        expect("in the shipped models the per-person step lengths, the accuracy card and the training notes use letters only", all(re.fullmatch(r"[A-Z]{1,2}", k) for k in DJ.get("people", {})) and all(re.fullmatch(r"[A-Z]{1,2}", k) for k in EJ.get("distance_per_person_mape", {})) and all(re.fullmatch(r"[A-Z]{1,2}", p) for p in SJ["meta"].get("persons", [])) and all(re.fullmatch(r"[A-Z]{1,2}", p) for p in EJ.get("persons", [])), str(list(DJ.get("people", {}))))
+for ignore in (ROOT / ".gitignore", ROOT / "apps" / "gait-steps-live" / ".gitignore"):
+    expect("%s keeps local recordings and the alias file out of git" % ignore.relative_to(ROOT), ignore.exists() and ("assets/data/" in ignore.read_text() or "all_trials" in ignore.read_text()))
+
+print("7f. the illustrations and the README")
+IMG = ["system-overview", "data-flow", "signal-anatomy", "architecture", "receptive-field", "count-is-a-sum", "training-loop", "collapse-and-fix", "live-counter-timeline", "results-overview", "architecture-comparison", "distance-model", "led-matrix", "decisions"]
+readme = (ROOT / "README.md").read_text(encoding="utf-8")
+linked = re.findall(r"!\[[^\]]*\]\(([^)]+\.png)\)", readme)
+expect("every picture the README links to exists, is a real PNG, and is small enough for Notion's 5 MB cap and for git (under 1 MB)", linked and all((ROOT / l).exists() and (ROOT / l).read_bytes()[:8] == b"\x89PNG\r\n\x1a\n" and 5_000 < (ROOT / l).stat().st_size < 1_000_000 for l in linked), str([l for l in linked if not (ROOT / l).exists()]))
+expect("all %d illustrations are in docs/images, and the README uses every one" % len(IMG), all((ROOT / "docs" / "images" / (n + ".png")).exists() for n in IMG) and all(("docs/images/%s.png" % n) in readme for n in IMG))
+nums = json.loads((ROOT / "docs" / "architecture_comparison_numbers.json").read_text(encoding="utf-8"))
+expect("the comparison numbers say where they came from, start with the shipped network, and each average lies inside its interval", "log" in nums["source"] and "GRU" in nums["source"] and nums["variants"][0]["name"] == "reference" and all(v["lo"] <= v["mean"] <= v["hi"] for v in nums["variants"]) and len(nums["variants"]) == 7)
+expect("the README says plainly that the GRU was not completed, that the paired intervals were not computed, and that the numbers are slightly optimistic", "GRU is missing" in readme and "never computed" in readme and "slightly optimistic" in readme)
+expect("the table in the README matches the numbers file, variant by variant", all(("%.2f (%.2f to %.2f)" % (v["mean"], v["lo"], v["hi"])) in readme for v in nums["variants"]))
+expect("the README has no personal name in it", not re.search(r"(?<![a-z])(" + "ken" "drick" + "|" + "ma" "rie" + ")(?![a-z])", readme, re.I))
+import importlib.util as _iu
+_sp = _iu.spec_from_file_location("make_images", ROOT / "docs" / "make_images.py"); _mi = _iu.module_from_spec(_sp); _sp.loader.exec_module(_mi)
+expect("the LED figure is drawn from the sketch's own font and lights the same number of LEDs the firmware test expects (7: 11, 42: 28, 99: 30, 100 or more: 43)", _mi.led_digits() == {7: 11, 42: 28, 99: 30, 150: 43})
 
 if not HAVE_TORCH:
     print("\nPyTorch tests skipped.")

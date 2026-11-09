@@ -1,8 +1,8 @@
 {
  "n_trials": 55,
  "persons": [
-  "Kendrick",
-  "marie"
+  "A",
+  "B"
  ],
  "network": {
   "n": 55,
@@ -182,7 +182,7 @@
  },
  "new_person": [
   {
-   "person": "Kendrick",
+   "person": "A",
    "n": 28,
    "network": {
     "n": 28,
@@ -214,7 +214,7 @@
    }
   },
   {
-   "person": "marie",
+   "person": "B",
    "n": 27,
    "network": {
     "n": 27,
@@ -326,7 +326,7 @@
    4.41505305225253
   ],
   "per_person": {
-   "Kendrick": {
+   "A": {
     "n": 18,
     "step_length_only_mape": 3.1213095652000216,
     "end_to_end_mape": 7.1673552125489834,
@@ -335,7 +335,7 @@
     "end_to_end_worst_pct": 24.8970139767777,
     "model": "step length = 0.483 + 0.024 x cadence"
    },
-   "marie": {
+   "B": {
     "n": 16,
     "step_length_only_mape": 13.017203779042454,
     "end_to_end_mape": 15.349120911193435,
@@ -348,440 +348,440 @@
  },
  "oof": [
   {
-   "name": "Kendrick__walk_slow__12steps__5.8m__20261103-031024.csv",
-   "person": "Kendrick",
+   "name": "A__walk_slow__12steps__5.8m__20261103-031024.csv",
+   "person": "A",
    "kind": "walk_slow",
    "true": 12,
    "network": 10.6870113022072,
    "baseline": 12.0
   },
   {
-   "name": "Kendrick__walk_slow__11steps__5.8m__20261103-031208.csv",
-   "person": "Kendrick",
+   "name": "A__walk_slow__11steps__5.8m__20261103-031208.csv",
+   "person": "A",
    "kind": "walk_slow",
    "true": 11,
    "network": 10.816318117834221,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__walk_normal__11steps__5.8m__20261103-031314.csv",
-   "person": "Kendrick",
+   "name": "A__walk_normal__11steps__5.8m__20261103-031314.csv",
+   "person": "A",
    "kind": "walk_normal",
    "true": 11,
    "network": 11.299755197927361,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__walk_normal__11steps__5.8m__20261103-031401.csv",
-   "person": "Kendrick",
+   "name": "A__walk_normal__11steps__5.8m__20261103-031401.csv",
+   "person": "A",
    "kind": "walk_normal",
    "true": 11,
    "network": 10.873331577127761,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__walk_fast__11steps__5.8m__20261103-031521.csv",
-   "person": "Kendrick",
+   "name": "A__walk_fast__11steps__5.8m__20261103-031521.csv",
+   "person": "A",
    "kind": "walk_fast",
    "true": 11,
    "network": 9.570794765286612,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__walk_fast__11steps__5.8m__20261103-031608.csv",
-   "person": "Kendrick",
+   "name": "A__walk_fast__11steps__5.8m__20261103-031608.csv",
+   "person": "A",
    "kind": "walk_fast",
    "true": 11,
    "network": 11.811309240609422,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__walk_slow__9steps__4.8m__20261103-031752.csv",
-   "person": "Kendrick",
+   "name": "A__walk_slow__9steps__4.8m__20261103-031752.csv",
+   "person": "A",
    "kind": "walk_slow",
    "true": 9,
    "network": 10.8722598271303,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__walk_slow__9steps__4.8m__20261103-031831.csv",
-   "person": "Kendrick",
+   "name": "A__walk_slow__9steps__4.8m__20261103-031831.csv",
+   "person": "A",
    "kind": "walk_slow",
    "true": 9,
    "network": 9.151379772466186,
    "baseline": 8.0
   },
   {
-   "name": "Kendrick__walk_normal__9steps__4.8m__20261103-032108.csv",
-   "person": "Kendrick",
+   "name": "A__walk_normal__9steps__4.8m__20261103-032108.csv",
+   "person": "A",
    "kind": "walk_normal",
    "true": 9,
    "network": 9.497024485237924,
    "baseline": 8.0
   },
   {
-   "name": "Kendrick__walk_normal__9steps__4.8m__20261103-032152.csv",
-   "person": "Kendrick",
+   "name": "A__walk_normal__9steps__4.8m__20261103-032152.csv",
+   "person": "A",
    "kind": "walk_normal",
    "true": 9,
    "network": 11.263189756410998,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__walk_fast__9steps__4.8m__20261103-032353.csv",
-   "person": "Kendrick",
+   "name": "A__walk_fast__9steps__4.8m__20261103-032353.csv",
+   "person": "A",
    "kind": "walk_fast",
    "true": 9,
    "network": 9.222744980558264,
    "baseline": 8.0
   },
   {
-   "name": "Kendrick__walk_fast__9steps__4.8m__20261103-032434.csv",
-   "person": "Kendrick",
+   "name": "A__walk_fast__9steps__4.8m__20261103-032434.csv",
+   "person": "A",
    "kind": "walk_fast",
    "true": 9,
    "network": 9.537214141785347,
    "baseline": 8.0
   },
   {
-   "name": "Kendrick__foot_tap__0steps__20261103-034042.csv",
-   "person": "Kendrick",
+   "name": "A__foot_tap__0steps__20261103-034042.csv",
+   "person": "A",
    "kind": "foot_tap",
    "true": 0,
    "network": 0.0006940634872290019,
    "baseline": 0.0
   },
   {
-   "name": "Kendrick__foot_tap__0steps__20261103-034316.csv",
-   "person": "Kendrick",
+   "name": "A__foot_tap__0steps__20261103-034316.csv",
+   "person": "A",
    "kind": "foot_tap",
    "true": 0,
    "network": 0.0003728943020693265,
    "baseline": 0.0
   },
   {
-   "name": "Kendrick__foot_tap__0steps__20261103-034352.csv",
-   "person": "Kendrick",
+   "name": "A__foot_tap__0steps__20261103-034352.csv",
+   "person": "A",
    "kind": "foot_tap",
    "true": 0,
    "network": 0.0006978177205865244,
    "baseline": 0.0
   },
   {
-   "name": "Kendrick__stand__0steps__20261103-035017.csv",
-   "person": "Kendrick",
+   "name": "A__stand__0steps__20261103-035017.csv",
+   "person": "A",
    "kind": "stand",
    "true": 0,
    "network": 1.2425677576974856e-05,
    "baseline": 0.0
   },
   {
-   "name": "Kendrick__stand__0steps__20261103-035044.csv",
-   "person": "Kendrick",
+   "name": "A__stand__0steps__20261103-035044.csv",
+   "person": "A",
    "kind": "stand",
    "true": 0,
    "network": 0.0004886325148270587,
    "baseline": 0.0
   },
   {
-   "name": "Kendrick__stand__0steps__20261103-035112.csv",
-   "person": "Kendrick",
+   "name": "A__stand__0steps__20261103-035112.csv",
+   "person": "A",
    "kind": "stand",
    "true": 0,
    "network": 0.00032189357523471074,
    "baseline": 0.0
   },
   {
-   "name": "Kendrick__foot_tap__0steps__20261103-035213.csv",
-   "person": "Kendrick",
+   "name": "A__foot_tap__0steps__20261103-035213.csv",
+   "person": "A",
    "kind": "foot_tap",
    "true": 0,
    "network": 0.0008615884658809136,
    "baseline": 0.0
   },
   {
-   "name": "Kendrick__jog__9steps__4.8m__20261103-035411.csv",
-   "person": "Kendrick",
+   "name": "A__jog__9steps__4.8m__20261103-035411.csv",
+   "person": "A",
    "kind": "jog",
    "true": 9,
    "network": 8.396900323822251,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__jog__9steps__4.8m__20261103-035451.csv",
-   "person": "Kendrick",
+   "name": "A__jog__9steps__4.8m__20261103-035451.csv",
+   "person": "A",
    "kind": "jog",
    "true": 9,
    "network": 9.608945691067785,
    "baseline": 8.0
   },
   {
-   "name": "Kendrick__jog__9steps__4.8m__20261103-035610.csv",
-   "person": "Kendrick",
+   "name": "A__jog__9steps__4.8m__20261103-035610.csv",
+   "person": "A",
    "kind": "jog",
    "true": 9,
    "network": 9.53937388314256,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__jog__10steps__5.8m__20261103-035914.csv",
-   "person": "Kendrick",
+   "name": "A__jog__10steps__5.8m__20261103-035914.csv",
+   "person": "A",
    "kind": "jog",
    "true": 10,
    "network": 10.857591978178448,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__jog__10steps__5.8m__20261103-040008.csv",
-   "person": "Kendrick",
+   "name": "A__jog__10steps__5.8m__20261103-040008.csv",
+   "person": "A",
    "kind": "jog",
    "true": 10,
    "network": 9.865665464064676,
    "baseline": 10.0
   },
   {
-   "name": "Kendrick__jog__10steps__5.8m__20261103-040109.csv",
-   "person": "Kendrick",
+   "name": "A__jog__10steps__5.8m__20261103-040109.csv",
+   "person": "A",
    "kind": "jog",
    "true": 10,
    "network": 10.122260282097411,
    "baseline": 10.0
   },
   {
-   "name": "marie__walk_slow__13steps__4.8m__20261103-042812.csv",
-   "person": "marie",
+   "name": "B__walk_slow__13steps__4.8m__20261103-042812.csv",
+   "person": "B",
    "kind": "walk_slow",
    "true": 13,
    "network": 14.45240149587168,
    "baseline": 12.0
   },
   {
-   "name": "marie__walk_slow__13steps__4.8m__20261103-042901.csv",
-   "person": "marie",
+   "name": "B__walk_slow__13steps__4.8m__20261103-042901.csv",
+   "person": "B",
    "kind": "walk_slow",
    "true": 13,
    "network": 11.279252724304985,
    "baseline": 12.0
   },
   {
-   "name": "marie__walk_normal__11steps__4.8m__20261103-043106.csv",
-   "person": "marie",
+   "name": "B__walk_normal__11steps__4.8m__20261103-043106.csv",
+   "person": "B",
    "kind": "walk_normal",
    "true": 11,
    "network": 8.9009686320443,
    "baseline": 12.0
   },
   {
-   "name": "marie__walk_normal__11steps__4.8m__20261103-043144.csv",
-   "person": "marie",
+   "name": "B__walk_normal__11steps__4.8m__20261103-043144.csv",
+   "person": "B",
    "kind": "walk_normal",
    "true": 11,
    "network": 11.579300315957292,
    "baseline": 10.0
   },
   {
-   "name": "marie__walk_fast__9steps__4.8m__20261103-043225.csv",
-   "person": "marie",
+   "name": "B__walk_fast__9steps__4.8m__20261103-043225.csv",
+   "person": "B",
    "kind": "walk_fast",
    "true": 9,
    "network": 8.777902740075142,
    "baseline": 10.0
   },
   {
-   "name": "marie__walk_fast__9steps__4.8m__20261103-043257.csv",
-   "person": "marie",
+   "name": "B__walk_fast__9steps__4.8m__20261103-043257.csv",
+   "person": "B",
    "kind": "walk_fast",
    "true": 9,
    "network": 10.078882579434215,
    "baseline": 10.0
   },
   {
-   "name": "marie__walk_slow__13steps__5.8m__20261103-043402.csv",
-   "person": "marie",
+   "name": "B__walk_slow__13steps__5.8m__20261103-043402.csv",
+   "person": "B",
    "kind": "walk_slow",
    "true": 13,
    "network": 12.864928642534807,
    "baseline": 10.0
   },
   {
-   "name": "marie__walk_slow__13steps__5.8m__20261103-043436.csv",
-   "person": "marie",
+   "name": "B__walk_slow__13steps__5.8m__20261103-043436.csv",
+   "person": "B",
    "kind": "walk_slow",
    "true": 13,
    "network": 12.128075173240044,
    "baseline": 10.0
   },
   {
-   "name": "marie__walk_normal__11steps__5.8m__20261103-043508.csv",
-   "person": "marie",
+   "name": "B__walk_normal__11steps__5.8m__20261103-043508.csv",
+   "person": "B",
    "kind": "walk_normal",
    "true": 11,
    "network": 12.206388528700668,
    "baseline": 12.0
   },
   {
-   "name": "marie__walk_normal__11steps__5.8m__20261103-043540.csv",
-   "person": "marie",
+   "name": "B__walk_normal__11steps__5.8m__20261103-043540.csv",
+   "person": "B",
    "kind": "walk_normal",
    "true": 11,
    "network": 12.06981397795915,
    "baseline": 12.0
   },
   {
-   "name": "marie__walk_fast__10steps__5.8m__20261103-043622.csv",
-   "person": "marie",
+   "name": "B__walk_fast__10steps__5.8m__20261103-043622.csv",
+   "person": "B",
    "kind": "walk_fast",
    "true": 10,
    "network": 9.678906506769689,
    "baseline": 10.0
   },
   {
-   "name": "marie__walk_fast__10steps__5.8m__20261103-043652.csv",
-   "person": "marie",
+   "name": "B__walk_fast__10steps__5.8m__20261103-043652.csv",
+   "person": "B",
    "kind": "walk_fast",
    "true": 10,
    "network": 10.15634339116584,
    "baseline": 10.0
   },
   {
-   "name": "marie__stand__0steps__20261103-043753.csv",
-   "person": "marie",
+   "name": "B__stand__0steps__20261103-043753.csv",
+   "person": "B",
    "kind": "stand",
    "true": 0,
    "network": 0.0010026252959445259,
    "baseline": 0.0
   },
   {
-   "name": "marie__stand__0steps__20261103-043821.csv",
-   "person": "marie",
+   "name": "B__stand__0steps__20261103-043821.csv",
+   "person": "B",
    "kind": "stand",
    "true": 0,
    "network": 0.0009363997266262913,
    "baseline": 0.0
   },
   {
-   "name": "marie__stand__0steps__20261103-043847.csv",
-   "person": "marie",
+   "name": "B__stand__0steps__20261103-043847.csv",
+   "person": "B",
    "kind": "stand",
    "true": 0,
    "network": 0.0010772072934415178,
    "baseline": 0.0
   },
   {
-   "name": "marie__foot_tap__0steps__20261103-043949.csv",
-   "person": "marie",
+   "name": "B__foot_tap__0steps__20261103-043949.csv",
+   "person": "B",
    "kind": "foot_tap",
    "true": 0,
    "network": 0.00035787355742122884,
    "baseline": 0.0
   },
   {
-   "name": "marie__foot_tap__0steps__20261103-044018.csv",
-   "person": "marie",
+   "name": "B__foot_tap__0steps__20261103-044018.csv",
+   "person": "B",
    "kind": "foot_tap",
    "true": 0,
    "network": 5.830221346773447e-05,
    "baseline": 0.0
   },
   {
-   "name": "marie__foot_tap__0steps__20261103-044228.csv",
-   "person": "marie",
+   "name": "B__foot_tap__0steps__20261103-044228.csv",
+   "person": "B",
    "kind": "foot_tap",
    "true": 0,
    "network": 0.0009631882903846645,
    "baseline": 2.0
   },
   {
-   "name": "marie__foot_tap__0steps__20261103-044255.csv",
-   "person": "marie",
+   "name": "B__foot_tap__0steps__20261103-044255.csv",
+   "person": "B",
    "kind": "foot_tap",
    "true": 0,
    "network": 0.0012313361475406737,
    "baseline": 8.0
   },
   {
-   "name": "marie__jog__8steps__4.8m__20261103-044434.csv",
-   "person": "marie",
+   "name": "B__jog__8steps__4.8m__20261103-044434.csv",
+   "person": "B",
    "kind": "jog",
    "true": 8,
    "network": 8.129210105121903,
    "baseline": 8.0
   },
   {
-   "name": "marie__jog__9steps__4.8m__20261103-044515.csv",
-   "person": "marie",
+   "name": "B__jog__9steps__4.8m__20261103-044515.csv",
+   "person": "B",
    "kind": "jog",
    "true": 9,
    "network": 6.620197468703964,
    "baseline": 8.0
   },
   {
-   "name": "marie__jog__10steps__5.8m__20261103-044546.csv",
-   "person": "marie",
+   "name": "B__jog__10steps__5.8m__20261103-044546.csv",
+   "person": "B",
    "kind": "jog",
    "true": 10,
    "network": 7.595086597188498,
    "baseline": 10.0
   },
   {
-   "name": "marie__jog__11steps__5.8m__20261103-044615.csv",
-   "person": "marie",
+   "name": "B__jog__11steps__5.8m__20261103-044615.csv",
+   "person": "B",
    "kind": "jog",
    "true": 11,
    "network": 8.54418003491264,
    "baseline": 10.0
   },
   {
-   "name": "marie__other__20steps__20261103-044737.csv",
-   "person": "marie",
+   "name": "B__other__20steps__20261103-044737.csv",
+   "person": "B",
    "kind": "other",
    "true": 20,
    "network": 20.326068742519254,
    "baseline": 20.0
   },
   {
-   "name": "marie__other__20steps__20261103-044804.csv",
-   "person": "marie",
+   "name": "B__other__20steps__20261103-044804.csv",
+   "person": "B",
    "kind": "other",
    "true": 20,
    "network": 19.76801853107796,
    "baseline": 20.0
   },
   {
-   "name": "marie__other__20steps__20261103-044828.csv",
-   "person": "marie",
+   "name": "B__other__20steps__20261103-044828.csv",
+   "person": "B",
    "kind": "other",
    "true": 20,
    "network": 19.60151129710914,
    "baseline": 20.0
   },
   {
-   "name": "marie__other__20steps__20261103-044851.csv",
-   "person": "marie",
+   "name": "B__other__20steps__20261103-044851.csv",
+   "person": "B",
    "kind": "other",
    "true": 20,
    "network": 19.133777950976874,
    "baseline": 20.0
   },
   {
-   "name": "Kendrick__other__20steps__20261103-051543.csv",
-   "person": "Kendrick",
+   "name": "A__other__20steps__20261103-051543.csv",
+   "person": "A",
    "kind": "other",
    "true": 20,
    "network": 19.484066788518884,
    "baseline": 20.0
   },
   {
-   "name": "Kendrick__other__20steps__20261103-051620.csv",
-   "person": "Kendrick",
+   "name": "A__other__20steps__20261103-051620.csv",
+   "person": "A",
    "kind": "other",
    "true": 20,
    "network": 17.21705262179273,
    "baseline": 22.0
   },
   {
-   "name": "Kendrick__other__20steps__20261103-051651.csv",
-   "person": "Kendrick",
+   "name": "A__other__20steps__20261103-051651.csv",
+   "person": "A",
    "kind": "other",
    "true": 20,
    "network": 19.391653866450767,
@@ -790,7 +790,7 @@
  ],
  "numpy_vs_torch_max_diff": 8.958920378887569e-07,
  "synthetic": false,
- "seconds": 401,
+ "seconds": 403,
  "cv_restarts": [
   0,
   0,

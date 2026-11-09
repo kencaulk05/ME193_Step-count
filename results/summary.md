@@ -36,8 +36,8 @@ Trained on everyone else, tested on this person.
 
 | Tested on | Trials | Network average error (steps) | Baseline average error (steps) |
 |---|---|---|---|
-| Kendrick | 28 | 1.19 | 0.71 |
-| marie | 27 | 1.16 | 3.04 |
+| A | 28 | 1.19 | 0.71 |
+| B | 27 | 1.16 | 3.04 |
 
 ## Distance walked
 
@@ -47,8 +47,8 @@ Trained on everyone else, tested on this person.
 |---|---|
 | Using your true step counts (the step-length model alone) | 8.8% |
 | End to end (the network's count x step length) | **11.5%** (bias +0.5%, SD 15.7%, worst 51.0%) |
-| End to end, step length calibrated on Kendrick's own walks only (18 walks; step length = 0.483 + 0.024 x cadence) | **7.2%** (bias +3.6%, SD 9.0%, worst 24.9%) |
-| End to end, step length calibrated on marie's own walks only (16 walks; step length = 0.275 + 0.103 x cadence) | **15.3%** (bias -4.3%, SD 19.8%, worst 41.2%) |
+| End to end, step length calibrated on A's own walks only (18 walks; step length = 0.483 + 0.024 x cadence) | **7.2%** (bias +3.6%, SD 9.0%, worst 24.9%) |
+| End to end, step length calibrated on B's own walks only (16 walks; step length = 0.275 + 0.103 x cadence) | **15.3%** (bias -4.3%, SD 19.8%, worst 41.2%) |
 
 People have different step lengths, so one model for everyone does worse than a model calibrated on the wearer's own measured walks.
 

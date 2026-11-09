@@ -1,0 +1,78 @@
+{
+ "source": "Typed in from the log of arch_compare.py (average error and 95% interval, two decimals). The run's per-trial predictions were not kept, so the paired differences against the shipped network were never computed, and the GRU run did not finish.",
+ "epochs": 60,
+ "folds": 5,
+ "trials": 55,
+ "variants": [
+  {
+   "name": "reference",
+   "what": "shipped: 16 filters, kernel 5, 5 layers",
+   "weights": 5857,
+   "mean": 0.67,
+   "lo": 0.47,
+   "hi": 0.89,
+   "walking_only": 0.89,
+   "restarts": 0
+  },
+  {
+   "name": "narrow",
+   "what": "8 filters",
+   "weights": 1649,
+   "mean": 0.79,
+   "lo": 0.58,
+   "hi": 1.0,
+   "walking_only": 1.05,
+   "restarts": 0
+  },
+  {
+   "name": "wide",
+   "what": "32 filters",
+   "weights": 21953,
+   "mean": 0.79,
+   "lo": 0.57,
+   "hi": 1.04,
+   "walking_only": 1.07,
+   "restarts": 1
+  },
+  {
+   "name": "shallow",
+   "what": "3 layers (reach 0.85 s)",
+   "weights": 3265,
+   "mean": 0.61,
+   "lo": 0.44,
+   "hi": 0.8,
+   "walking_only": 0.82,
+   "restarts": 0
+  },
+  {
+   "name": "deep",
+   "what": "6 layers (reach 2.5 s)",
+   "weights": 7153,
+   "mean": 0.89,
+   "lo": 0.6,
+   "hi": 1.21,
+   "walking_only": 1.19,
+   "restarts": 0
+  },
+  {
+   "name": "kernel3",
+   "what": "kernel 3, 6 layers",
+   "weights": 4337,
+   "mean": 0.65,
+   "lo": 0.46,
+   "hi": 0.88,
+   "walking_only": 0.87,
+   "restarts": 2
+  },
+  {
+   "name": "kernel9",
+   "what": "kernel 9, 4 layers",
+   "weights": 8145,
+   "mean": 0.85,
+   "lo": 0.62,
+   "hi": 1.08,
+   "walking_only": 1.14,
+   "restarts": 0
+  }
+ ]
+}

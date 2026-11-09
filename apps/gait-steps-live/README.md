@@ -34,6 +34,10 @@ Distance is steps times a step length. The step length comes from the first of t
 
 The page says which one it used. People have different step lengths, so a calibration on your own walks beats the model for everyone (in the tests: 7% against 11% for one person, and 15% for the other, whose step counts did not follow the distance as consistently).
 
+## Names
+
+The step-length models are called A and B (the order the two people recorded), never by a name, and the page suggests those letters. To use A's model when you type your own name, put a file `assets/data/person_aliases.json` next to the sessions, like `{"yourname": "A"}`. That folder is git-ignored (the sessions carry whatever name you typed), and so is the alias file: keep them out of git.
+
 ## What is saved
 
 In `assets/data/`, next to the page:

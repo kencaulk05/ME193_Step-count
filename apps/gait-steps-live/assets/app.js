@@ -112,10 +112,10 @@
     if (!e.n_trials) { box.textContent = 'No evaluation numbers were found next to the network.'; return; }
     const ci = e.network_mae_ci95 || [null, null];
     const people = e.distance_per_person_mape || {};
-    const ppl = Object.keys(people).map((k) => k + ' ' + fmt(people[k], 0) + '%').join(', ');
+    const ppl = Object.keys(people).map((k) => 'person ' + k + ' ' + fmt(people[k], 0) + '%').join(', ');
     box.textContent = (e.synthetic ? 'MADE-UP TRIALS: not real accuracy. ' : '') + 'On ' + e.n_trials + ' trials it had never seen: ' + fmt(e.network_mae, 2) + ' steps off on average (95% interval ' + fmt(ci[0], 2) + ' to ' + fmt(ci[1], 2) +
       '), ' + fmt(e.network_mae_rounded, 2) + ' once rounded to a whole number as on this screen, worst ' + fmt(e.worst, 1) + '. It counted ' + fmt(e.false_steps_network, 1) + ' steps while standing or tapping a foot. ' +
-      'Distance is steps times a step length: about ' + fmt(e.distance_end_to_end_mape, 0) + '% off with one model for everyone' + (ppl ? ' (' + ppl + ' calibrated on one person)' : '') + '. The truth in those trials was a human count, good to a step or two, and the walks were only 5 to 6 metres.';
+      'Distance is steps times a step length: about ' + fmt(e.distance_end_to_end_mape, 0) + '% off with one model for everyone' + (ppl ? ' (' + ppl + ', each calibrated on that person alone)' : '') + '. The truth in those trials was a human count, good to a step or two, and the walks were only 5 to 6 metres.';
   }
 
   function drawPlot(dens, gyro) {

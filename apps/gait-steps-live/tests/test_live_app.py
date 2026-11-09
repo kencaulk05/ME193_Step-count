@@ -1,6 +1,6 @@
 """Tests for python/main.py (the live step counter's logic, the glue to the page and the LED). No board needed.   python test_live_app.py
 If the real trials are found (STEPS_TRIALS=all_trials.zip, or all_trials.zip next to the project) they are streamed through the app too."""
-import csv, datetime, importlib.util, json, os, sys, tempfile, types
+import csv, datetime, importlib.util, json, os, re, sys, tempfile, types
 from pathlib import Path
 
 import numpy as np
@@ -101,7 +101,7 @@ def per_step_fn(live): live.process(); seen.append(live.counter.count)
 print("1. one walk, from START to a saved session")
 live = new_live("a")
 try:
-    live.start("kendrick"); expect("START is refused while no readings arrive", False)
+    live.start("sam"); expect("START is refused while no readings arrive", False)
 except ValueError as e:
     expect("START is refused while no readings arrive, and says so", "No IMU data" in str(e), str(e)[:70])
 feed(live, walk_signal(2.0, seed=9))                       # the sensor is streaming (idle: readings are not kept)
@@ -109,13 +109,13 @@ try:
     live.start(""); expect("START is refused without a name", False)
 except ValueError as e:
     expect("START is refused without a name", "who is wearing" in str(e))
-live.start("kendrick!")
-expect("the name is cleaned to letters and digits, and the app is walking", live.person == "kendrick" and live.mode == "walking")
+live.start("sam!")
+expect("the name is cleaned to letters and digits, and the app is walking", live.person == "sam" and live.mode == "walking")
 x = walk_signal(14.0, cadence=1.8, seed=3)
 seen.clear(); feed(live, x, per_step=25)
 snap = live.snapshot()
 expect("while walking the count rises (it never goes down by more than a hair between updates)", seen[-1] > 8 and all(b >= a - 1e-9 for a, b in zip(seen, seen[1:])), "%.1f" % seen[-1])
-expect("the snapshot shows walking, the person, a whole-number count, the elapsed time and a pace", snap["mode"] == "walking" and snap["person"] == "kendrick" and snap["steps"] == int(round(snap["steps_exact"])) and 13.5 <= snap["elapsed"] <= 14.5 and snap["pace"] > 0, str((snap["steps"], snap["elapsed"], snap["pace"])))
+expect("the snapshot shows walking, the person, a whole-number count, the elapsed time and a pace", snap["mode"] == "walking" and snap["person"] == "sam" and snap["steps"] == int(round(snap["steps_exact"])) and 13.5 <= snap["elapsed"] <= 14.5 and snap["pace"] > 0, str((snap["steps"], snap["elapsed"], snap["pace"])))
 expect("and the plot has the last seconds of the network's density and of the rotation", len(snap["plot"]["density"]) > 50 and len(snap["plot"]["gyro"]) > 50, str((len(snap["plot"]["density"]), len(snap["plot"]["gyro"]))))
 json.dumps(snap)
 offline = NET.count(features(x))
@@ -147,7 +147,7 @@ expect("the error is the counter's number minus yours, and the session now has y
 tal = live.tally()
 expect("the tally: 1 demo, average error 2, within one step 0%, worst 2", tal["n"] == 1 and tal["mae"] == 2.0 and tal["within1"] == 0.0 and tal["worst"] == 2.0 and abs(tal["bias"] + 2.0) < 1e-9, str(tal))
 trials, skipped = load_trials(tmp / "a")
-expect("and now the recorder's loader reads it as a trial with your count, kind 'live'", len(trials) == 1 and trials[0].steps == s["steps"] + 2 and trials[0].kind == "live" and trials[0].person == "kendrick" and len(trials[0].x) == len(x))
+expect("and now the recorder's loader reads it as a trial with your count, kind 'live', with the typed name replaced by a letter", len(trials) == 1 and trials[0].steps == s["steps"] + 2 and trials[0].kind == "live" and trials[0].person == "A" and trials[0].name.startswith("A__live__") and "sam" not in trials[0].name and len(trials[0].x) == len(x))
 man = list(csv.DictReader(open(tmp / "a" / "manifest.csv", encoding="utf-8")))
 expect("the manifest is in the recorder's format, with 0% lost", list(man[0].keys()) == main.MANIFEST_FIELDS and man[0]["kind"] == "live" and float(man[0]["lost_pct"]) == 0)
 expect("the live page can be told the session list, newest first, with the error", live.snapshot()["sessions"][0]["error"] == -2)
@@ -155,9 +155,9 @@ expect("the live page can be told the session list, newest first, with the error
 print("3. distance, and calibrating the step length")
 live.reset()
 expect("reset goes back to idle", live.mode == "idle" and live.last is None)
-feed(live, walk_signal(1.0, seed=1)); live.start("Kendrick"); feed(live, walk_signal(12.0, cadence=1.7, seed=5)); s2 = live.stop()
-expect("with a model fitted to Kendrick's recorded walks, the distance is steps times that model's step length, and it says where it came from",
-       s2["distance_est_m"] == round(s2["steps"] * s2["step_length_m"], 2) and 0.3 <= s2["step_length_m"] <= 1.2 and "Kendrick" in s2["step_length_source"], "%.3f m a step; %s" % (s2["step_length_m"], s2["step_length_source"]))
+feed(live, walk_signal(1.0, seed=1)); live.start("A"); feed(live, walk_signal(12.0, cadence=1.7, seed=5)); s2 = live.stop()
+expect("with a model fitted to person A's recorded walks, the distance is steps times that model's step length, and it says where it came from",
+       s2["distance_est_m"] == round(s2["steps"] * s2["step_length_m"], 2) and 0.3 <= s2["step_length_m"] <= 1.2 and "person A's" in s2["step_length_source"], "%.3f m a step; %s" % (s2["step_length_m"], s2["step_length_source"]))
 live.reset(); feed(live, walk_signal(1.0)); live.start("somebody new"); feed(live, walk_signal(10.0, seed=6)); s3 = live.stop()
 expect("an unknown person gets the model for everyone, and the page is told to calibrate", "model for everyone" in s3["step_length_source"] and "calibrate" in s3["step_length_source"], s3["step_length_source"])
 live.set_truth(s3["id"], 11, 5.8)
@@ -181,6 +181,19 @@ except ValueError as e:
 nod = new_live("nodist", dist={})
 feed(nod, walk_signal(1.0)); nod.start("ann"); feed(nod, walk_signal(8.0, seed=2)); sn = nod.stop()
 expect("with no step-length model at all there is no distance, and it says why", sn["distance_est_m"] == "" and "no step-length model" in sn["step_length_source"] and nod.snapshot()["distance_m"] is None)
+
+print("3b. a local alias file lets your own name use model A, and no real name is needed anywhere")
+al = tmp / "alias_dir"; al.mkdir()
+(al / "person_aliases.json").write_text(json.dumps({"Zed": "A"}))
+alive = main.Live(NET, DIST, EVAL, al, clock=clock, wall=wall)
+expect("the alias file is read, case-insensitively", alive.aliases == {"zed": "A"}, str(alive.aliases))
+feed(alive, walk_signal(1.0)); alive.start("ZED"); feed(alive, walk_signal(9.0, seed=31)); sa = alive.stop()
+expect("typing the aliased name uses model A, and says so", "person A's recorded walks" in sa["step_length_source"], sa["step_length_source"])
+alive.reset(); feed(alive, walk_signal(1.0)); alive.start("someone else"); feed(alive, walk_signal(9.0, seed=32)); sb = alive.stop()
+expect("an unaliased name falls back to the model for everyone", "model for everyone" in sb["step_length_source"])
+(al / "person_aliases.json").write_text("{ not json")
+expect("a broken alias file is ignored, not a crash", main.Live(NET, DIST, EVAL, al, clock=clock, wall=wall).aliases == {})
+expect("the models the app carries are called by letters, never by names", all(re.fullmatch(r"[A-Z]{1,2}", k) for k in DIST.get("people", {})) and all(re.fullmatch(r"[A-Z]{1,2}", k) for k in EVAL.get("distance_per_person_mape", {})), str(list(DIST.get("people", {}))))
 
 print("4. it all survives a restart")
 again = new_live("a")
@@ -233,13 +246,13 @@ notes = lambda: [m[1] for m in log["messages"] if m[0] == "notice"]
 feed(main.live, walk_signal(1.0))
 cmd("sid", {"action": "start", "person": ""})
 expect("START without a name: a warning that says what to fix", notes()[-1]["level"] == "warn" and "who is wearing" in notes()[-1]["text"], notes()[-1]["text"])
-cmd("sid", {"action": "start", "person": "kendrick"})
+cmd("sid", {"action": "start", "person": "sam"})
 expect("START: an info notice", notes()[-1]["level"] == "info" and "Counting" in notes()[-1]["text"])
 cmd("sid", {"action": "stop"})
 expect("STOP too soon: a warning, not a crash", notes()[-1]["level"] == "warn" and "under a second" in notes()[-1]["text"], notes()[-1]["text"])
 main.live.reset()
 feed(main.live, walk_signal(0.5)); log["calls"].clear(); log["messages"].clear()
-cmd("sid", {"action": "start", "person": "kendrick"})
+cmd("sid", {"action": "start", "person": "sam"})
 main.on_imu(counter_n[0], 0, 0, -1, 0, 0, 0)
 for i, row in enumerate(walk_signal(12.0, seed=12)):
     clock.t += 0.01; main.on_imu(counter_n[0] + i + 1, *[float(v) for v in row])
@@ -264,7 +277,7 @@ expect("deleting an unknown session: a warning", notes()[-1]["level"] == "warn" 
 cmd("sid", {"action": "nonsense"}); expect("an unknown command is refused", notes()[-1] == {"level": "warn", "text": "Unknown command."})
 cmd("sid", None); expect("an empty command is refused the same way, without a crash", notes()[-1] == {"level": "warn", "text": "Unknown command."})
 log["led_fails"] = True; main.live.mode, main.live.last = "idle", None
-main.live.counter.reset(); feed(main.live, walk_signal(1.0)); main.live.start("kendrick"); feed(main.live, walk_signal(2.0, seed=3)); main.live.process()
+main.live.counter.reset(); feed(main.live, walk_signal(1.0)); main.live.start("sam"); feed(main.live, walk_signal(2.0, seed=3)); main.live.process()
 try:
     for _ in range(3): log["loop"]()
     expect("a dead LED matrix does not stop the app", True)
@@ -301,12 +314,12 @@ D = {}
 pl = new_live("pl", evaluation=EVAL)
 D["idle_no_sensor"] = pl.snapshot()
 feed(pl, walk_signal(1.5)); D["idle"] = pl.snapshot()
-pl.start("kendrick"); feed(pl, walk_signal(9.0, cadence=1.8, seed=21)); D["walking"] = pl.snapshot()
+pl.start("A"); feed(pl, walk_signal(9.0, cadence=1.8, seed=21)); D["walking"] = pl.snapshot()
 clock.t += 3.0; D["walking_no_sensor"] = pl.snapshot()
 feed(pl, walk_signal(0.5)); sdone = pl.stop(); D["done"] = pl.snapshot()
 pl.set_truth(sdone["id"], sdone["steps"], 5.8); D["answered_exact"] = pl.snapshot()
-pl.reset(); feed(pl, walk_signal(1.0)); pl.start("kendrick"); feed(pl, walk_signal(7.0, seed=22)); s2_ = pl.stop(); pl.set_truth(s2_["id"], s2_["steps"] + 2); D["answered_too_few"] = pl.snapshot()
-pl.reset(); feed(pl, walk_signal(1.0)); pl.start("marie"); feed(pl, walk_signal(7.0, seed=23)); s3_ = pl.stop(); pl.set_truth(s3_["id"], max(0, s3_["steps"] - 1)); D["answered_too_many"] = pl.snapshot()
+pl.reset(); feed(pl, walk_signal(1.0)); pl.start("A"); feed(pl, walk_signal(7.0, seed=22)); s2_ = pl.stop(); pl.set_truth(s2_["id"], s2_["steps"] + 2); D["answered_too_few"] = pl.snapshot()
+pl.reset(); feed(pl, walk_signal(1.0)); pl.start("lee"); feed(pl, walk_signal(7.0, seed=23)); s3_ = pl.stop(); pl.set_truth(s3_["id"], max(0, s3_["steps"] - 1)); D["answered_too_many"] = pl.snapshot()
 nm = new_live("pl_nomodel", dist={}, evaluation={}); feed(nm, walk_signal(1.0)); nm.start("ann"); feed(nm, walk_signal(6.0, seed=24)); nm.stop(); D["done_no_model"] = nm.snapshot()
 expect("every payload is plain JSON", all(len(json.dumps(v)) > 200 for v in D.values()), str(sorted(D)))
 expect("they cover idle, walking, done, answered right, with too few, with too many, no sensor and no model", {"idle", "walking", "done", "answered_exact", "answered_too_few", "answered_too_many", "walking_no_sensor", "done_no_model"} <= set(D))
